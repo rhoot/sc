@@ -1,4 +1,4 @@
-sj
+sj [![appveyor status](https://ci.appveyor.com/api/projects/status/github/rhoot/sj?branch=master&svg=true)](https://ci.appveyor.com/project/rhoot/sj/branch/master)
 ==
 
 "Platform independent" co-routine library exposed through a minimal C API.

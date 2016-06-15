@@ -1,0 +1,22 @@
+image: Visual Studio 2015
+
+configuration:
+    - Debug
+    - Release
+
+platform:
+    - Win32
+    - x64
+
+build:
+    parallel: true
+    project: build/vs2015/sj.sln
+    verbosity: normal
+
+before_build:
+    - git submodule update --init
+    - ps: Start-FileDownload 'https://github.com/bkaradzic/bx/raw/master/tools/bin/windows/genie.exe'
+    - genie.exe vs2015
+
+test_script:
+    - bin\sj_tests.exe --reporter console
