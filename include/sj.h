@@ -7,15 +7,24 @@
 
 #include <stddef.h>
 
+#if defined(_MSC_VER)
+#   define SJ_CALL_DECL __stdcall
+#else
+#   define SJ_CALL_DECL
+#endif
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+    /// Minimum supported stack size.
+    enum { SJ_MIN_STACK_SIZE = 2048 };
 
     /// Context handle type.
     typedef struct sj_context* sj_context_t;
 
     /// Context procedure type.
-    typedef void (*sj_context_proc_t) (void* param);
+    typedef void (SJ_CALL_DECL * sj_context_proc_t) (void* param);
 
     /// Create a context with the given stack and procedure.
     ///
@@ -27,7 +36,7 @@ extern "C" {
     ///
     /// **Important:** The stack must be big enough to be able to contain the
     ///                maximum stack size used by the procedure.
-    sj_context_t sj_context_create (
+    sj_context_t SJ_CALL_DECL sj_context_create (
         void* stack_ptr,
         size_t stack_size,
         sj_context_proc_t proc
@@ -40,7 +49,7 @@ extern "C" {
     /// **Important:** The passed context must *not* be the currently executing
     ///                context, or the main context (retrieved by calling
     ///                `sj_main_context`).
-    void sj_context_destroy (sj_context_t context);
+    void SJ_CALL_DECL sj_context_destroy (sj_context_t context);
 
     /// Yield execution to another context, returning control to it, and
     /// passing the given value to it. Returns the value passed to
@@ -48,13 +57,13 @@ extern "C" {
     ///
     /// * `target`: Context to switch control to.
     /// * `value`: Value to pass to the target context.
-    void* sj_yield (sj_context_t target, void* value);
+    void* SJ_CALL_DECL sj_yield (sj_context_t target, void* value);
 
     /// Get the handle for the currently executing context.
-    sj_context_t sj_current_context ();
+    sj_context_t SJ_CALL_DECL sj_current_context ();
 
     /// Get the handle for this thread's main context.
-    sj_context_t sj_main_context ();
+    sj_context_t SJ_CALL_DECL sj_main_context ();
 
 #if defined(__cplusplus)
 } // extern "C"

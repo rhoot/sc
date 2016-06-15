@@ -12,7 +12,6 @@ solution "sj"
     location(path.join("../build", _ACTION))
 
     flags {
-        "EnableSSE2",
         "ExtraWarnings",
         "FatalWarnings",
         "NoExceptions",
