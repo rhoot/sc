@@ -14,9 +14,9 @@ Uses assembly from [boost::context] to do the heavy lifting.
 Building
 --------
 
-Project generation is done through [GENIe].
+Project generation is done through [GENie].
 
-1. Download [GENIe].
+1. Download [GENie].
 2. Run `genie <action>` in the root folder to generate project files. Refer to
    `genie --help` for the different actions (project types).
 3. Open up the **build** folder and build the projects.
@@ -40,4 +40,5 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF  
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+[GENie]:            https://github.com/bkaradzic/GENie      "bkaradzic/GENie"
 [boost::context]:   https://github.com/boostorg/context     "boostorg/context"
