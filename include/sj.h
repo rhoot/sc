@@ -1,5 +1,5 @@
-//---
-// Copyright (c) 2016 Johan Sk�ld
+﻿//---
+// Copyright (c) 2016 Johan Sköld
 // License: https://opensource.org/licenses/ISC
 //---
 
