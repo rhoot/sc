@@ -1,4 +1,4 @@
-sj [![appveyor status](https://ci.appveyor.com/api/projects/status/github/rhoot/sj?branch=master&svg=true)](https://ci.appveyor.com/project/rhoot/sj/branch/master)
+sc [![appveyor status](https://ci.appveyor.com/api/projects/status/github/rhoot/sc?branch=master&svg=true)](https://ci.appveyor.com/project/rhoot/sc/branch/master)
 ==
 
 "Platform independent" co-routine library exposed through a minimal C API.
@@ -16,10 +16,11 @@ Building
 
 Project generation is done through [GENie].
 
-1. Download [GENie].
-2. Run `genie <action>` in the root folder to generate project files. Refer to
+1. Ensure submodules are up to date by running `git submodule update --init`.
+2. Download [GENie].
+3. Run `genie <action>` in the root folder to generate project files. Refer to
    `genie --help` for the different actions (project types).
-3. Open up the **build** folder and build the projects.
+4. Open up the **build** folder and build the projects.
 
 To run the tests, build and run the **sj_tests** project.
 

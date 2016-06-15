@@ -10,7 +10,7 @@ platform:
 
 build:
     parallel: true
-    project: build/vs2015/sj.sln
+    project: build/vs2015/sc.sln
     verbosity: normal
 
 before_build:
@@ -19,4 +19,4 @@ before_build:
     - genie.exe vs2015
 
 test_script:
-    - bin\sj_tests.exe --reporter console
+    - bin\sc_tests.exe --reporter console

@@ -1,4 +1,4 @@
-solution "sj"
+solution "sc"
     configurations {
         "Debug",
         "Release",
@@ -43,7 +43,7 @@ solution "sj"
 
     configuration {}
 
-    dofile "sj.lua"
-    dofile "sj_tests.lua"
+    dofile "sc.lua"
+    dofile "sc_tests.lua"
 
-    startproject "sj_tests"
+    startproject "sc_tests"
