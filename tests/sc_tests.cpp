@@ -42,6 +42,9 @@ CheckAssert* CheckAssert::s_instance;
 //
 
 DESCRIBE("sc_context_create") {
+
+#if !defined(NDEBUG)
+
     CheckAssert asserter;
 
     GIVEN("a null stack buffer") {
@@ -70,6 +73,8 @@ DESCRIBE("sc_context_create") {
         }
     }
 
+#endif // !defined(NDEBUG)
+
     IT("should return a valid context") {
         auto proc = [](void *) {
             uint32_t cafebabe = 0xcafebabe;
@@ -91,6 +96,9 @@ DESCRIBE("sc_context_create") {
 //
 
 DESCRIBE("sc_context_destroy") {
+
+#if !defined(NDEBUG)
+
     static bool s_asserted;
 
     s_asserted = false;
@@ -129,6 +137,8 @@ DESCRIBE("sc_context_destroy") {
         }
     }
 
+#endif // !defined(NDEBUG)
+
     GIVEN("a valid context") {
         IT("should not assert") {
             uint8_t stack[SC_MIN_STACK_SIZE];
@@ -145,6 +155,9 @@ DESCRIBE("sc_context_destroy") {
 //
 
 DESCRIBE("sc_yield") {
+
+#if !defined(NDEBUG)
+
     CheckAssert asserter;
 
     GIVEN("a null context") {
@@ -154,6 +167,8 @@ DESCRIBE("sc_yield") {
             REQUIRE(asserter.asserted);
         }
     }
+
+#endif // !defined(NDEBUG)
 
     GIVEN("a valid context") {
         IT("should switch to that context") {

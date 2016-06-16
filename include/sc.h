@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <stddef.h>
+#include <stddef.h>     // size_t
 
 #if defined(_MSC_VER)
 #   define SC_CALL_DECL __stdcall

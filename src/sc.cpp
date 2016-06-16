@@ -21,17 +21,29 @@
 #endif
 
 //
+// Assumptions
+//
+
+#if defined(_MSC_VER)
+#   define SC_ASSUME(x) __assume(x)
+#else // !defined(_MSC_VER)
+#   define SC_ASSUME(x)                                 \
+        do {                                            \
+            if (!(x)) {                                 \
+                __builtin_unreachable();                \
+            }                                           \
+        } while (0,0)
+#endif // !defined(_MSC_VER)
+
+//
 // Assertion override, purely for unit testing purposes.
 //
 
 void (*g_sc_assert) ();
 
 #if defined(NDEBUG)
-
-#   define SC_ASSERT(expr)
-
+#   define SC_ASSERT(expr)  SC_ASSUME(expr)
 #else // !defined(NDEBUG)
-
 #   define SC_ASSERT(expr)                              \
         do {                                            \
             if (g_sc_assert) {                          \
@@ -42,8 +54,7 @@ void (*g_sc_assert) ();
                 assert(expr);                           \
             }                                           \
         } while (0,0)
-
-#endif // defined(NDEBUG)
+#endif // !defined(NDEBUG)
 
 //
 // Private implementation

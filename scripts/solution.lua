@@ -24,6 +24,11 @@ solution "sc"
         "../include",
     }
 
+    configuration {"Release"}
+        defines {
+            "NDEBUG"
+        }
+
     configuration {"x32"}
         libdirs {
             path.join("../lib", _ACTION, "x32")
