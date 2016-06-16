@@ -32,7 +32,7 @@
             if (!(x)) {                                 \
                 __builtin_unreachable();                \
             }                                           \
-        } while (0,0)
+        } while (false)
 #endif // !defined(_MSC_VER)
 
 //
@@ -53,7 +53,7 @@ void (*g_sc_assert) ();
             } else {                                    \
                 assert(expr);                           \
             }                                           \
-        } while (0,0)
+        } while (false)
 #endif // !defined(NDEBUG)
 
 //

@@ -9,8 +9,9 @@ different platforms, but the projects are not yet set up to support them.
 
 Currently supported compilers/configurations:
 
-* VS2015 (x86, x86_64)
-* VS2013 (x86, x86_64)
+* VS2015 (x86, x86_64; `genie vs2015`)
+* VS2013 (x86, x86_64; `genie vs2013`)
+* MinGW (x86, x86_64; `genie --gcc=mingw gmake`)
 
 Uses assembly from [boost::context] to do the heavy lifting.
 
@@ -22,7 +23,8 @@ Project generation is done through [GENie].
 1. Ensure submodules are up to date by running `git submodule update --init`.
 2. Download [GENie][GENie-dl].
 3. Run `genie <action>` in the root folder to generate project files. Refer to
-   `genie --help` for the different actions (project types).
+   the compiler list above for the supported actions, or `genie --help` for the
+   full list.
 4. Open up the **build** folder and build the projects.
 
 To run the tests, build and run the **sc_tests** project.

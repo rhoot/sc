@@ -6,7 +6,6 @@
 #include "framework.hpp"
 
 #include <sc.h>
-#include <excpt.h>
 
 //
 // Assertion testing
@@ -31,7 +30,7 @@ private:
 
     static void on_assert() {
         s_instance->asserted = true;
-        throw std::exception("assertion");
+        throw "assertion";
     }
 };
 

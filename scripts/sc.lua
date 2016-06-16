@@ -1,5 +1,10 @@
-lib_project "sc"
+project "sc"
+    language "C++"
+    targetname "sc"
+    toolchain "StaticLib"
+
     flags {
+        "NoExceptions",
         "NoRTTI",
     }
 
@@ -10,7 +15,7 @@ lib_project "sc"
         "../src/**.cpp",
     }
 
-    asm_files "../src"
+    asm_files "../src/asm"
 
     -- We're using asm from boost::context. Updating the files every time they
     -- get updated in the repo seems like a pain, so let's just fix the exports
