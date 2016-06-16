@@ -5,9 +5,12 @@ sc [![appveyor status](https://ci.appveyor.com/api/projects/status/github/rhoot/
 Future plans also include a type-safe C++ API.
 
 I say "platform independent" since it *technically* supports a heap of
-different platforms, but the projects are not yet set up to support them. The
-only currently supported project configuration is for VS2015 (possibly 2013,
-I haven't tested yet).
+different platforms, but the projects are not yet set up to support them.
+
+Currently supported compilers/configurations:
+
+* VS2015 (x86, x86_64)
+* VS2013 (x86, x86_64)
 
 Uses assembly from [boost::context] to do the heavy lifting.
 
@@ -17,12 +20,12 @@ Building
 Project generation is done through [GENie].
 
 1. Ensure submodules are up to date by running `git submodule update --init`.
-2. Download [GENie].
+2. Download [GENie][GENie-dl].
 3. Run `genie <action>` in the root folder to generate project files. Refer to
    `genie --help` for the different actions (project types).
 4. Open up the **build** folder and build the projects.
 
-To run the tests, build and run the **sj_tests** project.
+To run the tests, build and run the **sc_tests** project.
 
 License
 -------
@@ -41,5 +44,6 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF  
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-[GENie]:            https://github.com/bkaradzic/GENie      "bkaradzic/GENie"
-[boost::context]:   https://github.com/boostorg/context     "boostorg/context"
+[GENie]:            https://github.com/bkaradzic/GENie                  "bkaradzic/GENie"
+[GENie-dl]:         https://github.com/bkaradzic/GENie#download-stable  "bkaradzic/GENie"
+[boost::context]:   https://github.com/boostorg/context                 "boostorg/context"

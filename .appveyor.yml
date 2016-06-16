@@ -1,22 +1,19 @@
 image: Visual Studio 2015
 
-configuration:
-    - Debug
-    - Release
+environment:
+    matrix:
+        - TOOLSET: vs2013
+        - TOOLSET: vs2015
 
-platform:
-    - Win32
-    - x64
-
-build:
-    parallel: true
-    project: build/vs2015/sc.sln
-    verbosity: normal
-
-before_build:
-    - git submodule update --init
+build_script:
     - ps: Start-FileDownload 'https://github.com/bkaradzic/bx/raw/master/tools/bin/windows/genie.exe'
-    - genie.exe vs2015
-
-test_script:
+    - git submodule update --init
+    - genie.exe %TOOLSET%
+    - msbuild /m /p:Configuration=Debug /p:Platform=Win32 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - bin\sc_tests.exe --reporter console
+    - msbuild /m /p:Configuration=Release /p:Platform=Win32 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - bin\sc_tests.exe --reporter console
+    - msbuild /m /p:Configuration=Debug /p:Platform=x64 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - bin\sc_tests.exe --reporter console
+    - msbuild /m /p:Configuration=Release /p:Platform=x64 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
     - bin\sc_tests.exe --reporter console

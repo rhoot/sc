@@ -12,6 +12,15 @@
 #include "fcontext.hpp"
 
 //
+// VS2013 compatibility
+//
+
+#if defined(_MSC_VER) && _MSC_VER <= 1800
+#   define thread_local __declspec(thread)
+#   define alignof(x)   __alignof(x)
+#endif
+
+//
 // Assertion override, purely for unit testing purposes.
 //
 
@@ -41,14 +50,14 @@ void (*g_sc_assert) ();
 //
 
 struct sc_context {
-    fcontext_t fctx = nullptr;
-    sc_context_proc_t proc = nullptr;
+    fcontext_t fctx;
+    sc_context_proc_t proc;
 };
 
 namespace {
 
     thread_local sc_context t_main;
-    thread_local sc_context* t_current = &t_main;
+    thread_local sc_context* t_current;
 
     uintptr_t align_down (uintptr_t addr, uintptr_t alignment) {
         SC_ASSERT(alignment > 0);
@@ -63,8 +72,8 @@ namespace {
         // Jump back to parent
         transfer = jump_fcontext(transfer.fctx, nullptr);
 
-        // Update the current fiber
-        t_current->fctx = transfer.fctx;
+        // Update the current context
+        sc_current_context()->fctx = transfer.fctx;
         t_current = data;
 
         // Execute the context proc
@@ -128,11 +137,11 @@ extern "C" void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
 extern "C" void* SC_CALL_DECL sc_yield (sc_context_t target, void* value) {
     SC_ASSERT(target != nullptr);
 
-    auto this_ctx = t_current;
+    auto this_ctx = sc_current_context();
 
     if (target != this_ctx) {
         auto transfer = jump_fcontext(target->fctx, value);
-        t_current->fctx = transfer.fctx;
+        sc_current_context()->fctx = transfer.fctx;
         t_current = this_ctx;
         value = transfer.data;
     }
@@ -142,7 +151,7 @@ extern "C" void* SC_CALL_DECL sc_yield (sc_context_t target, void* value) {
 }
 
 extern "C" sc_context_t SC_CALL_DECL sc_current_context () {
-    return t_current;
+    return t_current ? t_current : &t_main;
 }
 
 extern "C" sc_context_t SC_CALL_DECL sc_main_context () {
