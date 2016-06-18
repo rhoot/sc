@@ -9,9 +9,11 @@ different platforms, but the projects are not yet set up to support them.
 
 Currently supported compilers/configurations:
 
-* VS2015 (x86, x86_64; `genie vs2015`)
-* VS2013 (x86, x86_64; `genie vs2013`)
 * MinGW (x86, x86_64; `genie --gcc=mingw gmake`)
+* VS2010 (x86, x86_64; `genie vs2010`)
+* VS2012 (x86, x86_64; `genie vs2012`)
+* VS2013 (x86, x86_64; `genie vs2013`)
+* VS2015 (x86, x86_64; `genie vs2015`)
 
 Uses assembly from [boost::context] to do the heavy lifting.
 
