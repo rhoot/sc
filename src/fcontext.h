@@ -1,11 +1,11 @@
-﻿//---
-// Copyright (c) 2016 Johan Sköld
-// License: https://opensource.org/licenses/ISC
-//---
+﻿/*
+ * Copyright (c) 2016 Johan Sköld
+ * License: https://opensource.org/licenses/ISC
+ */
 
 #pragma once
 
-#include <stddef.h> // size_t
+#include <stddef.h> /* size_t */
 
 #if defined(__cplusplus)
 extern "C" {
@@ -23,5 +23,5 @@ extern "C" {
     transfer_t ontop_fcontext(fcontext_t to, void* vp, transfer_t(*fn)(transfer_t));
 
 #if defined(__cplusplus)
-} // extern "C"
+} /* extern "C" */
 #endif

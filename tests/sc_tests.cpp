@@ -5,6 +5,8 @@
 
 #include "framework.hpp"
 
+#include <cstdint> // uint8_t
+
 #include <sc.h>
 
 //
@@ -14,9 +16,13 @@
 extern "C" void (* g_sc_assert) ();
 
 struct CheckAssert {
-    bool asserted = false;
+	bool should_throw;
+    bool asserted;
 
-    CheckAssert () {
+    CheckAssert ()
+		: should_throw(true)
+		, asserted(false)
+	{
         s_instance = this;
         g_sc_assert = on_assert;
     }
@@ -30,11 +36,47 @@ private:
 
     static void on_assert() {
         s_instance->asserted = true;
-        throw "assertion";
+
+		if (s_instance->should_throw) {
+			throw "assertion";
+		}
     }
 };
 
 CheckAssert* CheckAssert::s_instance;
+
+//
+// Test procs
+//
+
+namespace {
+
+	void SC_CALL_DECL empty_proc (void*) {}
+
+	void SC_CALL_DECL destroy_current_proc (void*) {
+		sc_context_destroy(sc_current_context());
+		sc_yield(sc_main_context(), nullptr);
+	}
+
+	void SC_CALL_DECL destroy_main_proc (void*) {
+		sc_context_destroy(sc_main_context());
+		sc_yield(sc_main_context(), nullptr);
+	}
+
+	void SC_CALL_DECL set_to_true_proc (void* param) {
+		*(bool*)param = true;
+		sc_yield(sc_main_context(), nullptr);
+	}
+
+	void SC_CALL_DECL yield_current_proc (void*) {
+		sc_yield(sc_main_context(), sc_current_context());
+	}
+
+	void SC_CALL_DECL yield_main_proc (void*) {
+		sc_yield(sc_main_context(), sc_main_context());
+	}
+
+} // namespace
 
 //
 // sc_context_create tests
@@ -49,7 +91,7 @@ DESCRIBE("sc_context_create") {
     GIVEN("a null stack buffer") {
         IT("should assert") {
             REQUIRE(!asserter.asserted);
-            CHECK_THROWS(sc_context_create(nullptr, SC_MIN_STACK_SIZE, [](void*) {}));
+            CHECK_THROWS(sc_context_create(nullptr, SC_MIN_STACK_SIZE, empty_proc));
             REQUIRE(asserter.asserted);
         }
     }
@@ -58,7 +100,7 @@ DESCRIBE("sc_context_create") {
         IT("should assert") {
             uint8_t buffer[SC_MIN_STACK_SIZE - 1];
             REQUIRE(!asserter.asserted);
-            CHECK_THROWS(sc_context_create(buffer, sizeof(buffer), [](void*) {}));
+            CHECK_THROWS(sc_context_create(buffer, sizeof(buffer), empty_proc));
             REQUIRE(asserter.asserted);
         }
     }
@@ -75,17 +117,14 @@ DESCRIBE("sc_context_create") {
 #endif // !defined(NDEBUG)
 
     IT("should return a valid context") {
-        auto proc = [](void *) {
-            uint32_t cafebabe = 0xcafebabe;
-            sc_yield(sc_main_context(), &cafebabe);
-        };
+		bool result = false;
 
         uint8_t stack[SC_MIN_STACK_SIZE];
-        auto context = sc_context_create(stack, sizeof(stack), proc);
-        auto result = (uint32_t*)sc_yield(context, nullptr);
+        auto context = sc_context_create(stack, sizeof(stack), set_to_true_proc);
+        sc_yield(context, &result);
         sc_context_destroy(context);
 
-        REQUIRE(*result == 0xcafebabe);
+        REQUIRE(result == true);
     }
 
 }
@@ -98,41 +137,29 @@ DESCRIBE("sc_context_destroy") {
 
 #if !defined(NDEBUG)
 
-    static bool s_asserted;
-
-    s_asserted = false;
-    g_sc_assert = []() { s_asserted = true; };
+	CheckAssert asserter;
+	asserter.should_throw = false;
 
     GIVEN("the current context") {
         IT("should assert") {
-            auto proc = [](void*) {
-                sc_context_destroy(sc_current_context());
-                sc_yield(sc_main_context(), nullptr);
-            };
-
             uint8_t stack[SC_MIN_STACK_SIZE];
-            auto context = sc_context_create(stack, sizeof(stack), proc);
+            auto context = sc_context_create(stack, sizeof(stack), destroy_current_proc);
             sc_yield(context, nullptr);
             sc_context_destroy(context);
 
-            REQUIRE(s_asserted);
+            REQUIRE(asserter.asserted == true);
 
         }
     }
 
     GIVEN("the main context") {
         IT("should assert") {
-            auto proc = [](void*) {
-                sc_context_destroy(sc_main_context());
-                sc_yield(sc_main_context(), nullptr);
-            };
-
             uint8_t stack[SC_MIN_STACK_SIZE];
-            auto context = sc_context_create(stack, sizeof(stack), proc);
+            auto context = sc_context_create(stack, sizeof(stack), destroy_main_proc);
             sc_yield(context, nullptr);
             sc_context_destroy(context);
 
-            REQUIRE(s_asserted);
+            REQUIRE(asserter.asserted == true);
         }
     }
 
@@ -141,7 +168,7 @@ DESCRIBE("sc_context_destroy") {
     GIVEN("a valid context") {
         IT("should not assert") {
             uint8_t stack[SC_MIN_STACK_SIZE];
-            auto context = sc_context_create(stack, sizeof(stack), [](void*) {});
+            auto context = sc_context_create(stack, sizeof(stack), empty_proc);
             sc_context_destroy(context);
         }
     }
@@ -171,19 +198,14 @@ DESCRIBE("sc_yield") {
 
     GIVEN("a valid context") {
         IT("should switch to that context") {
-            auto proc = [](void* executed) {
-                *(bool*)executed = true;
-                sc_yield(sc_main_context(), nullptr);
-            };
-
             auto executed = false;
 
             uint8_t stack[SC_MIN_STACK_SIZE];
-            auto context = sc_context_create(stack, sizeof(stack), proc);
+            auto context = sc_context_create(stack, sizeof(stack), set_to_true_proc);
             sc_yield(context, &executed);
             sc_context_destroy(context);
 
-            REQUIRE(executed);
+            REQUIRE(executed == true);
         }
     }
 
@@ -208,12 +230,8 @@ DESCRIBE("sc_current_context") {
     }
 
     IT("should return the sc_context_t of the currently executing context") {
-        auto proc = [](void*) {
-            sc_yield(sc_main_context(), sc_current_context());
-        };
-
         uint8_t stack[SC_MIN_STACK_SIZE];
-        auto context = sc_context_create(stack, sizeof(stack), proc);
+        auto context = sc_context_create(stack, sizeof(stack), yield_current_proc);
         auto current = sc_yield(context, nullptr);
         sc_context_destroy(context);
 
@@ -229,12 +247,8 @@ DESCRIBE("sc_current_context") {
 DESCRIBE("sc_main_context") {
 
     IT("should always return the main context") {
-        auto proc = [](void*) {
-            sc_yield(sc_main_context(), sc_main_context());
-        };
-
         uint8_t stack[SC_MIN_STACK_SIZE];
-        auto context = sc_context_create(stack, sizeof(stack), proc);
+        auto context = sc_context_create(stack, sizeof(stack), yield_main_proc);
         auto main = sc_yield(context, nullptr);
         sc_context_destroy(context);
 

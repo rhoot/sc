@@ -2,6 +2,8 @@ image: Visual Studio 2015
 
 environment:
     matrix:
+        - TOOLSET: vs2010
+        - TOOLSET: vs2012
         - TOOLSET: vs2013
         - TOOLSET: vs2015
 
@@ -9,11 +11,7 @@ build_script:
     - ps: Start-FileDownload 'https://github.com/bkaradzic/bx/raw/master/tools/bin/windows/genie.exe'
     - git submodule update --init
     - genie.exe %TOOLSET%
-    - msbuild /m /p:Configuration=Debug /p:Platform=Win32 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-    - bin\sc_tests.exe --reporter console
-    - msbuild /m /p:Configuration=Release /p:Platform=Win32 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-    - bin\sc_tests.exe --reporter console
-    - msbuild /m /p:Configuration=Debug /p:Platform=x64 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-    - bin\sc_tests.exe --reporter console
-    - msbuild /m /p:Configuration=Release /p:Platform=x64 "build\%TOOLSET%\sc.sln" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-    - bin\sc_tests.exe --reporter console
+    - scripts\build_and_test.bat Debug Win32
+    - scripts\build_and_test.bat Debug x64
+    - scripts\build_and_test.bat Release Win32
+    - scripts\build_and_test.bat Release x64

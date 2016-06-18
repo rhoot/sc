@@ -98,6 +98,10 @@ function toolchain(prjkind)
             premake.gcc.ar  = "ar"
         end
 
+        buildoptions_c {
+            "-std=c89",
+        }
+
         buildoptions_cpp {
             "-std=c++11",
         }
