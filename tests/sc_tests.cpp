@@ -11,7 +11,7 @@
 // Assertion testing
 //
 
-extern void (* g_sc_assert) ();
+extern "C" void (* g_sc_assert) ();
 
 struct CheckAssert {
     bool asserted = false;

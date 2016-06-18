@@ -1,5 +1,5 @@
 project "sc"
-    language "C++"
+    language "C"
     targetname "sc"
     toolchain "StaticLib"
 
@@ -9,10 +9,9 @@ project "sc"
     }
 
     files {
-        "../include/*.h",
-        "../include/**.hpp",
-        "../src/**.hpp",
-        "../src/**.cpp",
+        "../include/**.h",
+        "../src/**.h",
+        "../src/**.c",
     }
 
     asm_files "../src/asm"
