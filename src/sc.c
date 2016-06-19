@@ -6,7 +6,7 @@
 #include <sc.h>
 
 #include <assert.h>     /* assert */
-#include <stdint.h>		/* uintptr_t */
+#include <stdint.h>     /* uintptr_t */
 #include <stdlib.h>     /* exit */
 
 #include "fcontext.h"
@@ -96,11 +96,11 @@ sc_context_t SC_CALL_DECL sc_context_create (
     size_t stack_size,
     sc_context_proc_t proc
 ) {
-	uintptr_t stack_addr;
-	uintptr_t sp_addr;
-	uintptr_t data_addr;
-	fcontext_t fctx;
-	context_data* data;
+    uintptr_t stack_addr;
+    uintptr_t sp_addr;
+    uintptr_t data_addr;
+    fcontext_t fctx;
+    context_data* data;
 
     ASSERT(stack_ptr != NULL);
     ASSERT(stack_size >= SC_MIN_STACK_SIZE);
@@ -146,7 +146,7 @@ void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
 }
 
 void* SC_CALL_DECL sc_yield (sc_context_t target, void* value) {
-	context_data* this_ctx = sc_current_context();
+    context_data* this_ctx = sc_current_context();
 
     ASSERT(target != NULL);
 

@@ -16,13 +16,13 @@
 extern "C" void (* g_sc_assert) ();
 
 struct CheckAssert {
-	bool should_throw;
+    bool should_throw;
     bool asserted;
 
     CheckAssert ()
-		: should_throw(true)
-		, asserted(false)
-	{
+        : should_throw(true)
+        , asserted(false)
+    {
         s_instance = this;
         g_sc_assert = on_assert;
     }
@@ -37,9 +37,9 @@ private:
     static void on_assert() {
         s_instance->asserted = true;
 
-		if (s_instance->should_throw) {
-			throw "assertion";
-		}
+        if (s_instance->should_throw) {
+            throw "assertion";
+        }
     }
 };
 
@@ -51,30 +51,30 @@ CheckAssert* CheckAssert::s_instance;
 
 namespace {
 
-	void SC_CALL_DECL empty_proc (void*) {}
+    void SC_CALL_DECL empty_proc (void*) {}
 
-	void SC_CALL_DECL destroy_current_proc (void*) {
-		sc_context_destroy(sc_current_context());
-		sc_yield(sc_main_context(), nullptr);
-	}
+    void SC_CALL_DECL destroy_current_proc (void*) {
+        sc_context_destroy(sc_current_context());
+        sc_yield(sc_main_context(), nullptr);
+    }
 
-	void SC_CALL_DECL destroy_main_proc (void*) {
-		sc_context_destroy(sc_main_context());
-		sc_yield(sc_main_context(), nullptr);
-	}
+    void SC_CALL_DECL destroy_main_proc (void*) {
+        sc_context_destroy(sc_main_context());
+        sc_yield(sc_main_context(), nullptr);
+    }
 
-	void SC_CALL_DECL set_to_true_proc (void* param) {
-		*(bool*)param = true;
-		sc_yield(sc_main_context(), nullptr);
-	}
+    void SC_CALL_DECL set_to_true_proc (void* param) {
+        *(bool*)param = true;
+        sc_yield(sc_main_context(), nullptr);
+    }
 
-	void SC_CALL_DECL yield_current_proc (void*) {
-		sc_yield(sc_main_context(), sc_current_context());
-	}
+    void SC_CALL_DECL yield_current_proc (void*) {
+        sc_yield(sc_main_context(), sc_current_context());
+    }
 
-	void SC_CALL_DECL yield_main_proc (void*) {
-		sc_yield(sc_main_context(), sc_main_context());
-	}
+    void SC_CALL_DECL yield_main_proc (void*) {
+        sc_yield(sc_main_context(), sc_main_context());
+    }
 
 } // namespace
 
@@ -117,7 +117,7 @@ DESCRIBE("sc_context_create") {
 #endif // !defined(NDEBUG)
 
     IT("should return a valid context") {
-		bool result = false;
+        bool result = false;
 
         uint8_t stack[SC_MIN_STACK_SIZE];
         auto context = sc_context_create(stack, sizeof(stack), set_to_true_proc);
@@ -137,8 +137,8 @@ DESCRIBE("sc_context_destroy") {
 
 #if !defined(NDEBUG)
 
-	CheckAssert asserter;
-	asserter.should_throw = false;
+    CheckAssert asserter;
+    asserter.should_throw = false;
 
     GIVEN("the current context") {
         IT("should assert") {
