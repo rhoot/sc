@@ -1,0 +1,24 @@
+compiler: gcc
+language: cpp
+os: linux
+
+env:
+    - config=debug32
+    - config=debug64
+    - config=release32
+    - config=release64
+
+addons:
+    apt:
+        packages:
+            - build-essential
+            - gcc-multilib
+            - g++-multilib
+
+script:
+    - git submodule update --init
+    - wget https://github.com/bkaradzic/bx/raw/master/tools/bin/linux/genie
+    - chmod +x genie
+    - ./genie --gcc=linux gmake
+    - make -C build/gmake-gcc-linux config=$config
+    - bin/sc_tests --reporter console

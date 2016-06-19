@@ -4,7 +4,8 @@ newoption {
     description = "GCC flavor",
 
     allowed = {
-        {"mingw", "MinGW"},
+        {"mingw", "MinGW (x86, x86_64)"},
+        {"linux", "Linux (x86, x86_64)"},
     },
 }
 
@@ -39,6 +40,7 @@ function asm_files(basepath)
     configuration {"gmake", "x32"}
         local masks = {
             mingw = "**_i386_ms_pe_gas.S",
+            linux = "**_i386_sysv_elf_gas.S",
         }
 
         if masks[_OPTIONS["gcc"]] then
@@ -48,6 +50,7 @@ function asm_files(basepath)
     configuration {"gmake", "x64"}
         local masks = {
             mingw = "**_x86_64_ms_pe_gas.S",
+            linux = "**_x86_64_sysv_elf_gas.S",
         }
 
         if masks[_OPTIONS["gcc"]] then
@@ -66,8 +69,8 @@ function full_action()
     local pathsuffix = ""
 
     configuration {"gmake"}
-        if _OPTIONS["gcc"] == "mingw" then
-            pathsuffix = "-gcc-mingw"
+        if _OPTIONS.gcc then
+            pathsuffix = "-gcc-" .. _OPTIONS.gcc
         end
 
     configuration {}
@@ -103,7 +106,7 @@ function toolchain(prjkind)
         }
 
         buildoptions_cpp {
-            "-std=c++11",
+            "-std=c++0x",
         }
 
     configuration {"vs*"}

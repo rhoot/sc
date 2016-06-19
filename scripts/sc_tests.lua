@@ -15,3 +15,9 @@ project "sc_tests"
     links {
         "sc",
     }
+
+    configuration {"gmake"}
+        buildoptions_cpp {
+            -- Old GCC versions raise parentheses warnings from the test framework
+            "-Wno-parentheses",
+        }

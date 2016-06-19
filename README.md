@@ -1,4 +1,4 @@
-sc [![appveyor status](https://ci.appveyor.com/api/projects/status/github/rhoot/sc?branch=master&svg=true)](https://ci.appveyor.com/project/rhoot/sc/branch/master)
+sc [![travis-ci status](https://travis-ci.org/rhoot/sc.svg?branch=master)](https://travis-ci.org/rhoot/sc) [![appveyor status](https://ci.appveyor.com/api/projects/status/github/rhoot/sc?branch=master&svg=true)](https://ci.appveyor.com/project/rhoot/sc/branch/master)
 ==
 
 "Platform independent" co-routine library exposed through a minimal C API.
@@ -9,6 +9,7 @@ different platforms, but the projects are not yet set up to support them.
 
 Currently supported compilers/configurations:
 
+* Linux (x86, x86_64; `genie --gcc=linux gmake`)
 * MinGW (x86, x86_64; `genie --gcc=mingw gmake`)
 * VS2010 (x86, x86_64; `genie vs2010`)
 * VS2012 (x86, x86_64; `genie vs2012`)
