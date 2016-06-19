@@ -1,12 +1,21 @@
-compiler: gcc
 language: cpp
-os: linux
+
+os:
+    - linux
+    - osx
 
 env:
     - config=debug32
     - config=debug64
     - config=release32
     - config=release64
+
+matrix:
+    exclude:
+        - os: osx
+          env: config=debug32
+        - os: osx
+          env: config=release32
 
 addons:
     apt:
@@ -17,8 +26,4 @@ addons:
 
 script:
     - git submodule update --init
-    - wget https://github.com/bkaradzic/bx/raw/master/tools/bin/linux/genie
-    - chmod +x genie
-    - ./genie --gcc=linux gmake
-    - make -C build/gmake-gcc-linux config=$config
-    - bin/sc_tests --reporter console
+    - scripts/build_and_test.sh "$TRAVIS_OS_NAME" "$config"

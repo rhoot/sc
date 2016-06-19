@@ -11,6 +11,7 @@ Currently supported compilers/configurations:
 
 * Linux (x86, x86_64; `genie --gcc=linux gmake`)
 * MinGW (x86, x86_64; `genie --gcc=mingw gmake`)
+* OSX (x86_64; `genie --clang=osx gmake`)
 * VS2010 (x86, x86_64; `genie vs2010`)
 * VS2012 (x86, x86_64; `genie vs2012`)
 * VS2013 (x86, x86_64; `genie vs2013`)

@@ -20,4 +20,7 @@ project "sc_tests"
         buildoptions_cpp {
             -- Old GCC versions raise parentheses warnings from the test framework
             "-Wno-parentheses",
+
+            -- Clang complains about unused local function in release builds for assert tests
+            "-Wno-unused-function",
         }

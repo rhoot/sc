@@ -4,8 +4,18 @@ newoption {
     description = "GCC flavor",
 
     allowed = {
-        {"mingw", "MinGW (x86, x86_64)"},
         {"linux", "Linux (x86, x86_64)"},
+        {"mingw", "MinGW (x86, x86_64)"},
+    },
+}
+
+newoption {
+    trigger     = "clang",
+    value       = "clang",
+    description = "Clang flavor",
+
+    allowed = {
+        {"osx", "OSX (x86, x86_64)"},
     },
 }
 
@@ -39,22 +49,40 @@ function asm_files(basepath)
 
     configuration {"gmake", "x32"}
         local masks = {
-            mingw = "**_i386_ms_pe_gas.S",
-            linux = "**_i386_sysv_elf_gas.S",
+            clang = {
+                osx   = "**_i386_sysv_macho_gas.S",
+            },
+            gcc = {
+                linux = "**_i386_sysv_elf_gas.S",
+                mingw = "**_i386_ms_pe_gas.S",
+            },
         }
 
-        if masks[_OPTIONS["gcc"]] then
-            files {path.join(basepath, masks[_OPTIONS["gcc"]])}
+        if masks.clang[_OPTIONS.clang] then
+            files {path.join(basepath, masks.clang[_OPTIONS.clang])}
+        end
+
+        if masks.gcc[_OPTIONS.gcc] then
+            files {path.join(basepath, masks.gcc[_OPTIONS.gcc])}
         end
 
     configuration {"gmake", "x64"}
         local masks = {
-            mingw = "**_x86_64_ms_pe_gas.S",
-            linux = "**_x86_64_sysv_elf_gas.S",
+            clang = {
+                osx   = "**_x86_64_sysv_macho_gas.S",
+            },
+            gcc = {
+                linux = "**_x86_64_sysv_elf_gas.S",
+                mingw = "**_x86_64_ms_pe_gas.S",
+            },
         }
 
-        if masks[_OPTIONS["gcc"]] then
-            files {path.join(basepath, masks[_OPTIONS["gcc"]])}
+        if masks.clang[_OPTIONS.clang] then
+            files {path.join(basepath, masks.clang[_OPTIONS.clang])}
+        end
+
+        if masks.gcc[_OPTIONS.gcc] then
+            files {path.join(basepath, masks.gcc[_OPTIONS.gcc])}
         end
 
     configuration {}
@@ -69,6 +97,10 @@ function full_action()
     local pathsuffix = ""
 
     configuration {"gmake"}
+        if _OPTIONS.clang then
+            pathsuffix = "-clang-" .. _OPTIONS.clang
+        end
+
         if _OPTIONS.gcc then
             pathsuffix = "-gcc-" .. _OPTIONS.gcc
         end
@@ -95,7 +127,7 @@ function toolchain(prjkind)
     --
 
     configuration {"gmake"}
-        if _OPTIONS["gcc"] == "mingw" then
+        if _OPTIONS.gcc == "mingw" then
             premake.gcc.cc  = "x86_64-w64-mingw32-gcc"
             premake.gcc.cxx = "x86_64-w64-mingw32-g++"
             premake.gcc.ar  = "ar"
