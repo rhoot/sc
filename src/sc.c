@@ -31,24 +31,13 @@
 #endif
 
 /*
- * Assertion override, purely for unit testing purposes.
+ * Assertion
  */
 
-void (*g_sc_assert) ();
-
 #if defined(NDEBUG)
-#   define ASSERT(expr)  ASSUME(expr)
+#   define ASSERT(expr) ASSUME(expr)
 #else /* !defined(NDEBUG) */
-#   define ASSERT(expr)                     \
-        do {                                \
-            if (g_sc_assert) {              \
-                if (!(expr)) {              \
-                    g_sc_assert();          \
-                }                           \
-            } else {                        \
-                assert(expr);               \
-            }                               \
-        } while (0)
+#   define ASSERT(expr) assert(expr)
 #endif /* !defined(NDEBUG) */
 
 /*

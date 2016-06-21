@@ -29,13 +29,17 @@ extern "C" {
     /** Create a context with the given stack and procedure.
      **
      ** * `stack_ptr`:  Pointer to the buffer the context should use as stack.
-     ** * `stack_size`: Size of the context stack.
+     **                 Must be a valid pointer (not NULL).
+     ** * `stack_size`: Size of the stack buffer provided in `stack_ptr`. Must
+     **                 be at least `SC_MIN_STACK_SIZE`.
      ** * `proc`:       Procedure to invoke inside the new context. The
      **                 parameter passed to the proc will be the first value
      **                 yielded to the context through `sc_yield`.
      **
      ** **Important:** The stack must be big enough to be able to contain the
-     **                maximum stack size used by the procedure. */
+     **                maximum stack size used by the procedure. As this is
+     **                implementation specific, it is up to the caller (or
+     **                possibly attached debuggers) to ensure this is true. */
     sc_context_t SC_CALL_DECL sc_context_create (
         void* stack_ptr,
         size_t stack_size,
@@ -44,10 +48,8 @@ extern "C" {
 
     /** Destroy a context created through `sc_context_create`.
      **
-     ** * `context`: Context to destroy.
-     **
-     ** **Important:** The passed context must *not* be the currently executing
-     **                context, or the main context (retrieved by calling
+     ** * `context`: Context to destroy. Must not be the currently executing
+     **              context, or the main context (retrieved by calling
      **                `sc_main_context`). */
     void SC_CALL_DECL sc_context_destroy (sc_context_t context);
 
@@ -55,7 +57,9 @@ extern "C" {
      ** passing the given value to it. Returns the value passed to
      ** `sc_yield` when control is returned to the calling context.
      **
-     ** * `target`: Context to switch control to.
+     ** * `target`: Context to switch control to. Must be a valid context
+     **             created by `sc_context_create`, or returned by
+     **             `sc_main_context`.
      ** * `value`: Value to pass to the target context. */
     void* SC_CALL_DECL sc_yield (sc_context_t target, void* value);
 
