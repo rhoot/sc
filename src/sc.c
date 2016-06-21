@@ -71,9 +71,6 @@ static void context_proc (transfer_t transfer) {
 
     /* Execute the context proc */
     data->proc(transfer.data);
-
-    /* TODO: If a proc gets to run to its end we should exit the thread, not the process. */
-    exit(0);
 }
 
 /*
