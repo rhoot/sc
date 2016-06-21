@@ -36,6 +36,9 @@ extern "C" {
      **                 parameter passed to the proc will be the first value
      **                 yielded to the context through `sc_yield`.
      **
+     ** **Note:** If the proc is allowed to run to its end, it will cause the
+     **           process to exit.
+     **
      ** **Important:** The stack must be big enough to be able to contain the
      **                maximum stack size used by the procedure. As this is
      **                implementation specific, it is up to the caller (or
