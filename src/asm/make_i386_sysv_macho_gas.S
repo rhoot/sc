@@ -24,10 +24,6 @@ _make_fcontext:
     /* first arg of make_fcontext() == top of context-stack */
     movl  0x4(%esp), %eax
 
-    /* reserve space for first argument of context-function
-       rax might already point to a 16byte border */
-    leal  -0x8(%eax), %eax
-
     /* shift address in EAX to lower 16 byte boundary */
     andl  $-16, %eax
 
@@ -38,11 +34,6 @@ _make_fcontext:
     /* stored in EBX */
     movl  0xc(%esp), %edx
     movl  %edx, 0x8(%eax)
-
-    /* return transport_t */
-    /* FCTX == EDI, DATA == ESI */
-    leal  (%eax), %ecx
-    movl  %ecx, 0x14(%eax)
 
     /* compute abs address of label trampoline */
     call  1f
@@ -67,14 +58,17 @@ _make_fcontext:
     ret /* return pointer to context-data */
 
 trampoline:
-    /* move transport_t for entering context-function */
-    movl  %edi, (%esp)
-    movl  %esi, 0x4(%esp)
+    /* move transport_t from the return value from jump_fcontext, to be passed
+       as parameter when entering the context-function */
+    movl  %eax, (%esp)
+    movl  %edx, 0x4(%esp)
     pushl %ebp
     /* jump to context-function */
     jmp *%ebx
 
 finish:
+    /* 16-bit alignment required for call */
+    andl  $-16, %esp
     /* exit code is zero */
     xorl  %eax, %eax
     movl  %eax, (%esp)

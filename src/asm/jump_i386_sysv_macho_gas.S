@@ -26,24 +26,21 @@ _jump_fcontext:
     pushl  %esi  /* save ESI */
     pushl  %edi  /* save EDI */
 
-    /* store fcontext_t in ECX */
-    movl  %esp, %ecx
+    /* The IA-32 ABI causes 8 byte structs to be returned split between EAX
+       and EDX. For us, this means the parent fcontext_t should be in EAX and
+       the data in EDX. */
+
+    /* store current fcontext_t in EAX */
+    movl  %esp, %eax
 
     /* first arg of jump_fcontext() == context jumping to */
-    movl  0x18(%esp), %eax
+    movl  0x14(%esp), %ecx
 
     /* second arg of jump_fcontext() == data to be transferred */
-    movl  0x1c(%esp), %edx
+    movl  0x18(%esp), %edx
 
-    /* restore ESP (pointing to context-data) from EAX */
-    movl  %eax, %esp
-
-    /* address of returned transport_t */
-    movl 0x14(%esp), %eax
-    /* return parent fcontext_t */
-    movl  %ecx, (%eax)
-    /* return data */
-    movl %edx, 0x4(%eax)
+    /* restore ESP (pointing to context-data) from ECX */
+    movl  %ecx, %esp
 
     popl  %edi  /* restore EDI */
     popl  %esi  /* restore ESI */
@@ -51,4 +48,4 @@ _jump_fcontext:
     popl  %ebp  /* restore EBP */
 
     /* jump to context */
-    ret $4
+    ret
