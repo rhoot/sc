@@ -10,13 +10,6 @@ env:
     - config=release32
     - config=release64
 
-matrix:
-    exclude:
-        - os: osx
-          env: config=debug32
-        - os: osx
-          env: config=release32
-
 addons:
     apt:
         packages:
