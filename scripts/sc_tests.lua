@@ -12,6 +12,8 @@ project "sc_tests"
         "../tests/**.cpp",
     }
 
+    asm_files "../tests/asm"
+
     links {
         "sc",
     }
