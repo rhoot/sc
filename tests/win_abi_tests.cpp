@@ -94,8 +94,6 @@ DESCRIBE("Windows x64 ABI") {
         REQUIRE((rsp & 15) == 8);
     }
 
-#if !defined(SC_NO_XMM_PRESERVE)
-
     IT("should preserve [xmm6..xmm15] on context switch") {
         const int mainBase = 0x1000;
         const int ctxBase = 0x2000;
@@ -119,8 +117,6 @@ DESCRIBE("Windows x64 ABI") {
 
         sc_context_destroy(context);
     }
-
-#endif // !defined(SC_NO_XMM_PRESERVE)
 
 }
 

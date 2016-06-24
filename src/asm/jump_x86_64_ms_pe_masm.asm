@@ -92,8 +92,6 @@ jump_fcontext PROC FRAME
     push  rax
 
     ; preserve non-volatile xmm registers
-IFNDEF SC_NO_XMM_PRESERVE
-    ; reserve the space and ensure we're aligned to 16 bytes
     mov  rax,  rsp
     and  rax,  -16
     sub  rsp,  0a8h
@@ -108,7 +106,6 @@ IFNDEF SC_NO_XMM_PRESERVE
     movdqa  [rax-080h],  xmm13  ; save xmm13
     movdqa  [rax-090h],  xmm14  ; save xmm14
     movdqa  [rax-0a0h],  xmm15  ; save xmm15
-ENDIF
 
     ; preserve RSP (pointing to context-data) in R9
     mov  r9, rsp
@@ -117,8 +114,6 @@ ENDIF
     mov  rsp, rdx
 
     ; restore non-volatile xmm registers
-IFNDEF SC_NO_XMM_PRESERVE
-    ; align to 16 bytes
     add  rsp,  0a8h
     mov  rax,  rsp
     and  rax,  -16
@@ -133,7 +128,6 @@ IFNDEF SC_NO_XMM_PRESERVE
     movdqa  xmm13,  [rax-080h]  ; restore xmm13
     movdqa  xmm14,  [rax-090h]  ; restore xmm14
     movdqa  xmm15,  [rax-0a0h]  ; restore xmm15
-ENDIF
 
     ; load NT_TIB
     mov  r10, gs:[030h]

@@ -79,18 +79,12 @@ make_fcontext PROC FRAME
     ; reserve space for context-data on context-stack
     ; EXIT will be used as the return address for the context-function and
     ; must have its end be 16-byte aligned
-IFNDEF SC_NO_XMM_PRESERVE
-    ; 160 bytes xmm storage
+
+    ; 160 bytes xmm storage, 8 bytes alignment, 168 bytes stack data
     ;   8 bytes alignment
     ; 168 bytes stack data
     sub  rax, 0150h
     mov  r9, 0a8h
-ELSE
-    ;   8 bytes alignment
-    ; 168 bytes stack data
-    sub  rax, 0a8h
-    xor  r9, r9
-ENDIF
 
     ; third arg of make_fcontext() == address of context-function
     mov  [rax+r9+068h], r8
