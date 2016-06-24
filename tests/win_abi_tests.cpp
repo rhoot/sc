@@ -12,16 +12,12 @@
 
 #include <sc.h>
 
-extern "C" {
-
-    __m128i get_xmm_register (int index);
-    void set_xmm_register (int index, __m128i value);
-
-}
-
 //
 // Helpers
 //
+
+extern "C" __m128i get_xmm_register (int index);
+extern "C" void set_xmm_register (int index, __m128i value);
 
 namespace {
 
