@@ -5,6 +5,13 @@
           http://www.boost.org/LICENSE_1_0.txt)
 */
 
+/*
+   Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
+
+   - 2016: Updated to conform with Apple's IA-32 ABI; 8-byte return values
+           should be returned in eax/edx, not on the stack.
+*/
+
 /*****************************************************************************************
  *                                                                                       *
  *  -----------------------------------------------------------------------------------  *

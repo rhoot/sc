@@ -5,6 +5,13 @@
           http://www.boost.org/LICENSE_1_0.txt)
 */
 
+/*
+   Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
+
+   - 2016: Updated to conform with Apple's IA-32 ABI; 8-byte return values
+           should be returned in eax/edx, not on the stack.
+*/
+
 /*****************************************************************************************
  *                                                                                       *
  *  -----------------------------------------------------------------------------------  *
@@ -53,7 +60,7 @@ _make_fcontext:
     addl  $finish-2b, %ecx
     /* save address of finish as return-address for context-function */
     /* will be entered after context-function returns */
-    movl  %ecx, 0xc(%eax) 
+    movl  %ecx, 0xc(%eax)
 
     ret /* return pointer to context-data */
 

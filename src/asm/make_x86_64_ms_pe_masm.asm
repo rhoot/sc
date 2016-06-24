@@ -4,6 +4,10 @@
 ;     (See accompanying file LICENSE_1_0.txt or copy at
 ;           http://www.boost.org/LICENSE_1_0.txt)
 
+;  Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
+;
+;  - 2016: XMM6-XMM15 must be preserved by the callee in Windows x64.
+
 ;  ----------------------------------------------------------------------------------
 ;  |    0x0  |    0x4  |    0x8   |    0xc  |   0x10  |   0x14  |   0x18  |   0x1c  |
 ;  ----------------------------------------------------------------------------------
@@ -81,8 +85,6 @@ make_fcontext PROC FRAME
     ; must have its end be 16-byte aligned
 
     ; 160 bytes xmm storage, 8 bytes alignment, 168 bytes stack data
-    ;   8 bytes alignment
-    ; 168 bytes stack data
     sub  rax, 0150h
     mov  r9, 0a8h
 
