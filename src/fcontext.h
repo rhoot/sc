@@ -20,7 +20,6 @@ extern "C" {
 
     transfer_t jump_fcontext (fcontext_t to, void* vp);
     fcontext_t make_fcontext (void* sp, size_t size, void(*fn)(transfer_t));
-    transfer_t ontop_fcontext (fcontext_t to, void* vp, transfer_t(*fn)(transfer_t));
 
 #if defined(__cplusplus)
 } /* extern "C" */
