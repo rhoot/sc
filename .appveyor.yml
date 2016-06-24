@@ -12,6 +12,6 @@ build_script:
     - git submodule update --init
     - genie.exe %TOOLSET%
     - scripts\build_and_test.bat Debug Win32
-    - scripts\build_and_test.bat Debug x64
     - scripts\build_and_test.bat Release Win32
-    - scripts\build_and_test.bat Release x64
+    - if "%TOOLSET%" NEQ "vs2010" scripts\build_and_test.bat Debug x64
+    - if "%TOOLSET%" NEQ "vs2010" scripts\build_and_test.bat Release x64
