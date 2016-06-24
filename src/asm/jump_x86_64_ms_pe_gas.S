@@ -88,11 +88,43 @@ jump_fcontext:
     movq  0x18(%r10), %rax
     pushq  %rax
 
+    /* preserve non-volatile xmm registers */
+    movq  %rsp, %rax
+    andq  $-16, %rax
+    subq  $0xa8, %rsp
+
+    movdqa  %xmm6, -0x10(%rax)   /* save xmm6 */
+    movdqa  %xmm7, -0x20(%rax)   /* save xmm7 */
+    movdqa  %xmm8, -0x30(%rax)   /* save xmm8 */
+    movdqa  %xmm9, -0x40(%rax)   /* save xmm9 */
+    movdqa  %xmm10, -0x50(%rax)  /* save xmm10 */
+    movdqa  %xmm11, -0x60(%rax)  /* save xmm11 */
+    movdqa  %xmm12, -0x70(%rax)  /* save xmm12 */
+    movdqa  %xmm13, -0x80(%rax)  /* save xmm13 */
+    movdqa  %xmm14, -0x90(%rax)  /* save xmm14 */
+    movdqa  %xmm15, -0xa0(%rax)  /* save xmm15 */
+
     /* preserve RSP (pointing to context-data) in R9 */
     movq  %rsp, %r9
 
     /* restore RSP (pointing to context-data) from RDX */
     movq  %rdx, %rsp
+
+    /* restore non-volatile xmm registers */
+    addq  $0xa8, %rsp
+    movq  %rsp, %rax
+    andq  $-16, %rax
+
+    movdqa  -0x10(%rax), %xmm6   /* restore xmm6 */
+    movdqa  -0x20(%rax), %xmm7   /* restore xmm7 */
+    movdqa  -0x30(%rax), %xmm8   /* restore xmm8 */
+    movdqa  -0x40(%rax), %xmm9   /* restore xmm9 */
+    movdqa  -0x50(%rax), %xmm10  /* restore xmm10 */
+    movdqa  -0x60(%rax), %xmm11  /* restore xmm11 */
+    movdqa  -0x70(%rax), %xmm12  /* restore xmm12 */
+    movdqa  -0x80(%rax), %xmm13  /* restore xmm13 */
+    movdqa  -0x90(%rax), %xmm14  /* restore xmm14 */
+    movdqa  -0xa0(%rax), %xmm15  /* restore xmm15 */
 
     /* load NT_TIB */
     movq  %gs:(0x30), %r10

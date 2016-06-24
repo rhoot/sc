@@ -70,38 +70,42 @@ make_fcontext:
     andq  $-16, %rax
 
     /* reserve space for context-data on context-stack */
-    /* on context-function entry: (RSP -0x8) % 16 == 0 */
-    leaq  -0xb8(%rax), %rax
+    /* EXIT will be used as the return address for the context-function and */
+    /* must have its end be 16-byte aligned */
+
+    /* 160 bytes xmm storage, 8 bytes alignment, 168 bytes stack data */
+    leaq  -0x150(%rax), %rax
+    movq  $0xa8, %r9
 
     /* third arg of make_fcontext() == address of context-function */
-    movq  %r8, 0x68(%rax)
+    movq  %r8, 0x68(%rax, %r9)
 
     /* first arg of make_fcontext() == top of context-stack */
     /* save top address of context stack as 'base' */
-    movq  %rcx, 0x18(%rax)
+    movq  %rcx, 0x18(%rax, %r9)
     /* second arg of make_fcontext() == size of context-stack */
     /* negate stack size for LEA instruction (== substraction) */
     negq  %rdx
     /* compute bottom address of context stack (limit) */
     leaq  (%rcx,%rdx), %rcx
     /* save bottom address of context stack as 'limit' */
-    movq  %rcx, 0x10(%rax)
+    movq  %rcx, 0x10(%rax, %r9)
     /* save address of context stack limit as 'dealloction stack' */
-    movq  %rcx, 0x8(%rax)
+    movq  %rcx, 0x8(%rax, %r9)
 	/* set fiber-storage to zero */
     xorq  %rcx, %rcx
-    movq  %rcx, (%rax)
+    movq  %rcx, (%rax, %r9)
 
     /* compute address of transport_t */
-    leaq  0x98(%rax), %rcx
+    leaq  0x98(%rax, %r9), %rcx
     /* store address of transport_t in hidden field */
-    movq %rcx, 0x60(%rax)
+    movq %rcx, 0x60(%rax, %r9)
 
     /* compute abs address of label finish */
     leaq  finish(%rip), %rcx
     /* save address of finish as return-address for context-function */
     /* will be entered after context-function returns */
-    movq  %rcx, 0x70(%rax)
+    movq  %rcx, 0x70(%rax, %r9)
 
     ret /* return pointer to context-data */
 

@@ -3,7 +3,7 @@
 // License: https://opensource.org/licenses/ISC
 //---
 
-#if defined(_WIN64) && defined(_MSC_VER)
+#if defined(_WIN64)
 
 #include "framework.hpp"
 
@@ -120,4 +120,4 @@ DESCRIBE("Windows x64 ABI") {
 
 }
 
-#endif // defined(_WIN64) && defined(_MSC_VER)
+#endif // defined(_WIN64)
