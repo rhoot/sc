@@ -111,6 +111,8 @@ void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
     /* This doesn't actually do anything, but it's provided partly to get a
      * symmetric API, but mainly so we can easily do cleanup if need be in the
      * future. */
+
+    (void)context;
 }
 
 void* SC_CALL_DECL sc_yield (sc_context_t target, void* value) {
