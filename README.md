@@ -8,9 +8,7 @@ Based on assembly from [boost::context].
 Building
 --------
 
-Project generation is done through [GENie-dl].
-
-### Supported configurations:
+Project generation is done through [GENie][GENie-dl].
 
 #### Linux (x86, x86_64)
 
