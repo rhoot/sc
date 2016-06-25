@@ -44,14 +44,14 @@ static void context_proc (transfer_t transfer) {
     context_data* data = (context_data*)transfer.data;
     assert(data != NULL);
 
-        /* Jump back to parent */
-        transfer = jump_fcontext(transfer.fctx, NULL);
+    /* Jump back to parent */
+    transfer = jump_fcontext(transfer.fctx, NULL);
 
-        /* Update the current context */
-        sc_current_context()->fctx = transfer.fctx;
-        t_current = data;
+    /* Update the current context */
+    sc_current_context()->fctx = transfer.fctx;
+    t_current = data;
 
-        /* Execute the context proc */
+    /* Execute the context proc */
     data->proc(transfer.data);
 }
 
