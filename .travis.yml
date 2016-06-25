@@ -18,5 +18,4 @@ addons:
             - g++-multilib
 
 script:
-    - git submodule update --init
     - scripts/build_and_test.sh "$TRAVIS_OS_NAME" "$config"
