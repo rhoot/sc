@@ -1,37 +1,67 @@
 sc [![travis-ci status](https://travis-ci.org/rhoot/sc.svg?branch=master)](https://travis-ci.org/rhoot/sc) [![appveyor status](https://ci.appveyor.com/api/projects/status/github/rhoot/sc?branch=master&svg=true)](https://ci.appveyor.com/project/rhoot/sc/branch/master)
 ==
 
-"Platform independent" co-routine library exposed through a minimal C API.
-Future plans also include a type-safe C++ API.
+Cross platform co-routine library exposed through a minimal C API.
 
-I say "platform independent" since it *technically* supports a heap of
-different platforms, but the projects are not yet set up to support them.
-
-Currently supported compilers/configurations:
-
-* Linux (x86, x86_64; `genie --gcc=linux gmake`)
-* MinGW (x86, x86_64; `genie --gcc=mingw gmake`)
-* OSX (x86, x86_64; `genie --clang=osx gmake`)
-* VS2010 (x86, x86_64; `genie vs2010`)
-* VS2012 (x86, x86_64; `genie vs2012`)
-* VS2013 (x86, x86_64; `genie vs2013`)
-* VS2015 (x86, x86_64; `genie vs2015`)
-
-Uses assembly from [boost::context] to do the heavy lifting.
+Based on assembly from [boost::context].
 
 Building
 --------
 
-Project generation is done through [GENie].
+Project generation is done through [GENie-dl].
 
-1. Ensure submodules are up to date by running `git submodule update --init`.
-2. Download [GENie][GENie-dl].
-3. Run `genie <action>` in the root folder to generate project files. Refer to
-   the compiler list above for the supported actions, or `genie --help` for the
-   full list.
-4. Open up the **build** folder and build the projects.
+### Supported configurations:
 
-To run the tests, build and run the **sc_tests** project.
+#### Linux (x86, x86_64)
+
+1. Generate makefiles.
+
+        genie --gcc=linux gmake
+
+2. Build your preferred configuration.
+
+        make -C build/gmake-gcc-linux config=debug32
+        make -C build/gmake-gcc-linux config=debug64
+        make -C build/gmake-gcc-linux config=release32
+        make -C build/gmake-gcc-linux config=release64
+
+#### MinGW (x86, x86_64)
+
+1. Generate makefiles. MinGW-w64's binaries are assumed to be in the `%PATH%`.
+
+        genie --gcc=mingw gmake
+
+2. Build your preferred configuration.
+
+        make -C build/gmake-gcc-mingw config=debug32
+        make -C build/gmake-gcc-mingw config=debug64
+        make -C build/gmake-gcc-mingw config=release32
+        make -C build/gmake-gcc-mingw config=release64
+
+#### OSX (x86, x86_64)
+
+1. Generate makefiles.
+
+        genie --clang=osx gmake
+
+2. Build your preferred configuration.
+
+        make -C build/gmake-clang-osx config=debug32
+        make -C build/gmake-clang-osx config=debug64
+        make -C build/gmake-clang-osx config=release32
+        make -C build/gmake-clang-osx config=release64
+
+#### Visual Studio (x86, x86_64)
+
+1. Generate project files for your preferred version of Visual Studio.
+
+        genie vs2010
+        genie vs2012
+        genie vs2013
+        genie vs2015
+        genie vs15
+
+2. Open and build the `build\vs<version>\sc.sln` file.
 
 License
 -------
@@ -50,6 +80,5 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF  
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-[GENie]:            https://github.com/bkaradzic/GENie                  "bkaradzic/GENie"
 [GENie-dl]:         https://github.com/bkaradzic/GENie#download-stable  "bkaradzic/GENie"
 [boost::context]:   https://github.com/boostorg/context                 "boostorg/context"
