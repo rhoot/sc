@@ -17,16 +17,6 @@ namespace {
 
     void SC_CALL_DECL empty_proc (void*) {}
 
-    void SC_CALL_DECL destroy_current_proc (void*) {
-        sc_context_destroy(sc_current_context());
-        sc_yield(sc_main_context(), nullptr);
-    }
-
-    void SC_CALL_DECL destroy_main_proc (void*) {
-        sc_context_destroy(sc_main_context());
-        sc_yield(sc_main_context(), nullptr);
-    }
-
     void SC_CALL_DECL set_to_true_proc (void* param) {
         *(bool*)param = true;
         sc_yield(sc_main_context(), nullptr);
