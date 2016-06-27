@@ -9,7 +9,6 @@ get_xmm_register PROC FRAME
     .endprolog
 
     ; First argument (rcx) = register to get
-    ; Return value (xmm0) = value of the register
 
     cmp  rcx,  6
     je  get_6
