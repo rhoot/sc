@@ -2,15 +2,13 @@ image: Visual Studio 2015
 
 environment:
     matrix:
-        - TOOLSET: vs2010
-        - TOOLSET: vs2012
-        - TOOLSET: vs2013
-        - TOOLSET: vs2015
+        - TOOLSET: Visual Studio 10 2010
+        - TOOLSET: Visual Studio 11 2012
+        - TOOLSET: Visual Studio 12 2013
+        - TOOLSET: Visual Studio 14 2015
 
 build_script:
-    - ps: Start-FileDownload 'https://github.com/bkaradzic/bx/raw/master/tools/bin/windows/genie.exe'
-    - genie.exe %TOOLSET%
-    - scripts\build_and_test.bat Debug Win32
-    - scripts\build_and_test.bat Release Win32
-    - if "%TOOLSET%" NEQ "vs2010" scripts\build_and_test.bat Debug x64
-    - if "%TOOLSET%" NEQ "vs2010" scripts\build_and_test.bat Release x64
+    - scripts\build_and_test.bat Debug
+    - scripts\build_and_test.bat Release
+    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build_and_test.bat Debug Win64
+    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build_and_test.bat Release Win64

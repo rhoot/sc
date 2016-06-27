@@ -1,14 +1,17 @@
 language: cpp
 
+sudo: required
+dist: trusty
+
 os:
     - linux
     - osx
 
 env:
-    - config=debug32
-    - config=debug64
-    - config=release32
-    - config=release64
+    - config=Debug cpu=i386
+    - config=Debug cpu=x86_64
+    - config=Release cpu=i386
+    - config=Release cpu=x86_64
 
 addons:
     apt:
@@ -17,5 +20,11 @@ addons:
             - gcc-multilib
             - g++-multilib
 
+#before_install:
+#    - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'linux' ]; then scripts/before_install-linux.sh; fi"
+
 script:
-    - scripts/build_and_test.sh "$TRAVIS_OS_NAME" "$config"
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=$config -DCMAKE_SYSTEM_PROCESSOR=$cpu ..
+    - make VERBOSE=1
+    - bin/sc_tests --reporter console
