@@ -10,8 +10,17 @@ os:
 env:
     - config=Debug cpu=i386
     - config=Debug cpu=x86_64
+    - config=Debug cpu=i386;x86_64
     - config=Release cpu=i386
     - config=Release cpu=x86_64
+    - config=Release cpu=i386;x86_64
+
+matrix:
+    exclude:
+        - os: linux
+          env: config=Debug cpu=i386;x86_64
+        - os: linux
+          env: config=Release cpu=i386;x86_64
 
 addons:
     apt:
@@ -20,11 +29,25 @@ addons:
             - gcc-multilib
             - g++-multilib
 
-#before_install:
-#    - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'linux' ]; then scripts/before_install-linux.sh; fi"
+# Ensure we have a recent-ish CMake version
+install:
+    - |
+        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+            CMAKE_URL="http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz"
+            mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+            export PATH="$(pwd)/cmake/bin:$PATH"
+        else
+            brew install cmake
+        fi
 
 script:
+    - cmake --version
     - mkdir build && cd build
-    - cmake -DCMAKE_BUILD_TYPE=$config -DCMAKE_SYSTEM_PROCESSOR=$cpu ..
+    - |
+        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+            cmake -DCMAKE_BUILD_TYPE="$config" -DCMAKE_SYSTEM_PROCESSOR="$cpu" ..
+        else
+            cmake -DCMAKE_BUILD_TYPE="$config" -DCMAKE_OSX_ARCHITECTURES="$cpu" ..
+        fi
     - make VERBOSE=1
     - bin/sc_tests --reporter console
