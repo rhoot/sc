@@ -37,7 +37,8 @@ install:
             mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
             export PATH="$(pwd)/cmake/bin:$PATH"
         else
-            brew install cmake
+            brew update
+            if brew outdated --quiet | grep -qx cmake; then brew upgrade cmake; fi
         fi
 
 script:
