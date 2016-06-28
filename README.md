@@ -3,63 +3,48 @@ sc [![travis-ci status](https://travis-ci.org/rhoot/sc.svg?branch=master)](https
 
 Cross platform co-routine library exposed through a minimal C API.
 
+Supported platforms and compilers:
+
+* Linux (x86, x86_64)
+* MinGW (x86, x86_64)
+* OSX (x86, x86_64, universal)
+* Visual Studio 2010+ (x86, x86_64)
+
 Based on assembly from [boost::context].
 
 Building
 --------
 
-Project generation is done through [GENie][GENie-dl].
+Build script generation is done through [CMake]. To generate scripts
+appropriate for your current system, simply run the below.
 
-#### Linux (x86, x86_64)
+    mkdir build
+    cd build
+    cmake ..
 
-1. Generate makefiles.
+All build related files will go into the newly created build direcetory, which
+may safely be deleted at any time. If you want to specify your preferred build
+script type, you may do so by using CMake's `-G` parameter to change the
+generator. Refer to `cmake --help` for a list of the available generators.
 
-        genie --gcc=linux gmake
+### Defines
 
-2. Build your preferred configuration.
+Some defines may be used to modify the build.
 
-        make -C build/gmake-gcc-linux config=debug32
-        make -C build/gmake-gcc-linux config=debug64
-        make -C build/gmake-gcc-linux config=release32
-        make -C build/gmake-gcc-linux config=release64
+#### CMAKE_OSX_ARCHITECTURES
 
-#### MinGW (x86, x86_64)
+    cmake -DCMAKE_OSX_ARCHITECTURES=<...> ..
 
-1. Generate makefiles. MinGW-w64's binaries are assumed to be in the `%PATH%`.
+**OSX only.** Replace `<...>` above with a semicolon-separated list of
+architectures to include in the resulting binaries (i386, x86_64).
 
-        genie --gcc=mingw gmake
+#### SC_FORCE_32BIT
 
-2. Build your preferred configuration.
+    cmake -DSC_FORCE_32BIT=1 ..
 
-        make -C build/gmake-gcc-mingw config=debug32
-        make -C build/gmake-gcc-mingw config=debug64
-        make -C build/gmake-gcc-mingw config=release32
-        make -C build/gmake-gcc-mingw config=release64
-
-#### OSX (x86, x86_64)
-
-1. Generate makefiles.
-
-        genie --clang=osx gmake
-
-2. Build your preferred configuration.
-
-        make -C build/gmake-clang-osx config=debug32
-        make -C build/gmake-clang-osx config=debug64
-        make -C build/gmake-clang-osx config=release32
-        make -C build/gmake-clang-osx config=release64
-
-#### Visual Studio (x86, x86_64)
-
-1. Generate project files for your preferred version of Visual Studio.
-
-        genie vs2010
-        genie vs2012
-        genie vs2013
-        genie vs2015
-        genie vs15
-
-2. Open and build the `build\vs<version>\sc.sln` file.
+**GCC compatible compilers only.** Force building of a 32-bit binary even when
+on a 64-bit system. For OSX, prefer using the `CMAKE_OSX_ARCHITECTURES` define
+instead.
 
 License
 -------
@@ -78,5 +63,6 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF  
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+[CMake]:            https://cmake.org                                   "CMake"
 [GENie-dl]:         https://github.com/bkaradzic/GENie#download-stable  "bkaradzic/GENie"
 [boost::context]:   https://github.com/boostorg/context                 "boostorg/context"
