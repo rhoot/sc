@@ -3,14 +3,14 @@ sc [![travis-ci status](https://travis-ci.org/rhoot/sc.svg?branch=master)](https
 
 Cross platform co-routine library exposed through a minimal C API.
 
-Supported platforms and compilers:
+Supported platforms:
 
-|         | arm | x86 | x86_64 | universal |
-|---------|-----|-----|--------|-----------|
-| Android |  ✓  |  ✓  |    ✓   |           |
-| Linux   |     |  ✓  |    ✓   |           |
-| OSX     |     |  ✓  |    ✓   |     ✓     |
-| Windows |     |  ✓  |    ✓   |           |
+|         | arm | mips | universal | x86 | x86_64 |
+|---------|-----|------|-----------|-----|--------|
+| Android |  ✓  |   ✓  |           |  ✓  |    ✓   |
+| Linux   |     |      |           |  ✓  |    ✓   |
+| OSX     |     |      |     ✓     |  ✓  |    ✓   |
+| Windows |     |      |           |  ✓  |    ✓   |
 
 Based on assembly from [boost::context].
 

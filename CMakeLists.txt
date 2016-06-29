@@ -96,6 +96,10 @@ add_library(sc STATIC
     $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},arm>>:src/asm/jump_arm_aapcs_elf_gas.s>
     $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},arm>>:src/asm/make_arm_aapcs_elf_gas.s>
 
+    # Android (mips)
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},mips>>:src/asm/jump_mips32_o32_elf_gas.s>
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},mips>>:src/asm/make_mips32_o32_elf_gas.s>
+
     # Android (x86)
     $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},i386>>:src/asm/jump_i386_sysv_elf_gas.s>
     $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},i386>>:src/asm/make_i386_sysv_elf_gas.s>

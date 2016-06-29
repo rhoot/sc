@@ -5,6 +5,13 @@
           http://www.boost.org/LICENSE_1_0.txt)
 */
 
+/*
+   Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
+
+   - 2016: Fixed a bug with wrong argument being passed as data in returned
+           transfer_ts.
+*/
+
 /*******************************************************
  *                                                     *
  *  -------------------------------------------------  *
@@ -69,13 +76,14 @@ jump_fcontext:
 
     # adjust stack
     addiu $sp, $sp, 112
-    
+
     # return transfer_t from jump
     sw  $a0, ($t0)  # fctx of transfer_t
-    sw  $a1, 4($t0) # data of transfer_t
+    sw  $a2, 4($t0) # data of transfer_t
+
     # pass transfer_t as first arg in context function
     # A0 == fctx, A1 == data
-    move  $a1, $a2 
+    move  $a1, $a2
 
     # jump to context
     jr  $t9
