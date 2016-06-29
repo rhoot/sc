@@ -5,11 +5,12 @@ Cross platform co-routine library exposed through a minimal C API.
 
 Supported platforms and compilers:
 
-* Android (arm)
-* Linux (x86, x86_64)
-* MinGW (x86, x86_64)
-* OSX (x86, x86_64, universal)
-* Visual Studio 2010+ (x86, x86_64)
+|         | arm | x86 | x86_64 | universal |
+|---------|-----|-----|--------|-----------|
+| Android |  ✓  |  ✓  |    ✓   |           |
+| Linux   |     |  ✓  |    ✓   |           |
+| OSX     |     |  ✓  |    ✓   |     ✓     |
+| Windows |     |  ✓  |    ✓   |           |
 
 Based on assembly from [boost::context].
 
@@ -60,12 +61,14 @@ to compile for.
           -DCMAKE_BUILD_TYPE=<configuration> \
           -DANDROID_NDK=<ndk path> \
           -DANDROID_NATIVE_API_LEVEL=<api level> \
+          -DANDROID_ABI=<abi>
           ..
     make
 
 Replace `<configuration>` above with one of `Debug` and `Release`, `<ndk path>`
-with the path to your installed NDK, and `<api level>` with your desired API
-level.
+with the path to your installed NDK, `<api level>` with your desired API level,
+and `<abi>` with your target ABI. Please refer to [android-cmake's README] for
+all available options.
 
 License
 -------
@@ -84,6 +87,7 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF  
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-[android-cmake]:    https://github.com/taka-no-me/android-cmake         "taka-no-me/android-cmake"
-[boost::context]:   https://github.com/boostorg/context                 "boostorg/context"
-[CMake]:            https://cmake.org                                   "CMake"
+[android-cmake]:          https://github.com/taka-no-me/android-cmake "taka-no-me/android-cmake"
+[android-cmake's README]: 3rdparty/android-cmake/README.md            "android-cmake's README"
+[boost::context]:         https://github.com/boostorg/context         "boostorg/context"
+[CMake]:                  https://cmake.org                           "CMake"

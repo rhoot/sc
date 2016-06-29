@@ -30,6 +30,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 elseif(NOT SC_TARGET_CPU)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
         set(SC_TARGET_CPU "arm")
+    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
+        set(SC_TARGET_CPU "i386")
     else()
         set(SC_TARGET_CPU ${CMAKE_SYSTEM_PROCESSOR})
     endif()
@@ -90,9 +92,17 @@ add_library(sc STATIC
     $<$<PLATFORM_ID:Linux>:src/asm/jump_${SC_TARGET_CPU}_sysv_elf_gas.s>
     $<$<PLATFORM_ID:Linux>:src/asm/make_${SC_TARGET_CPU}_sysv_elf_gas.s>
 
-    # Android
-    $<$<PLATFORM_ID:Android>:src/asm/jump_${SC_TARGET_CPU}_aapcs_elf_gas.s>
-    $<$<PLATFORM_ID:Android>:src/asm/make_${SC_TARGET_CPU}_aapcs_elf_gas.s>)
+    # Android (arm)
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},arm>>:src/asm/jump_arm_aapcs_elf_gas.s>
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},arm>>:src/asm/make_arm_aapcs_elf_gas.s>
+
+    # Android (x86)
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},i386>>:src/asm/jump_i386_sysv_elf_gas.s>
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},i386>>:src/asm/make_i386_sysv_elf_gas.s>
+
+    # Android (x86_64)
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:src/asm/jump_x86_64_sysv_elf_gas.s>
+    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:src/asm/make_x86_64_sysv_elf_gas.s>)
 
 target_compile_definitions(sc
     PRIVATE
