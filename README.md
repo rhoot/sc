@@ -5,6 +5,7 @@ Cross platform co-routine library exposed through a minimal C API.
 
 Supported platforms and compilers:
 
+* Android (arm)
 * Linux (x86, x86_64)
 * MinGW (x86, x86_64)
 * OSX (x86, x86_64, universal)
@@ -46,6 +47,26 @@ architectures to include in the resulting binaries (i386, x86_64).
 on a 64-bit system. For OSX, prefer using the `CMAKE_OSX_ARCHITECTURES` define
 instead.
 
+### Android
+
+To build for android, [Andrey Kamaev's toolchain file][android-cmake] is
+included in this repository to simplify the process. You will need to know
+where the Android NDK is located on your hard drive, as well as what API level
+to compile for.
+
+    mkdir build-android
+    cd build-android
+    cmake -DCMAKE_TOOLCHAIN_FILE=../3rdparty/android-cmake/android.toolchain.cmake \
+          -DCMAKE_BUILD_TYPE=<configuration> \
+          -DANDROID_NDK=<ndk path> \
+          -DANDROID_NATIVE_API_LEVEL=<api level> \
+          ..
+    make
+
+Replace `<configuration>` above with one of `Debug` and `Release`, `<ndk path>`
+with the path to your installed NDK, and `<api level>` with your desired API
+level.
+
 License
 -------
 
@@ -63,6 +84,6 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF  
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-[CMake]:            https://cmake.org                                   "CMake"
-[GENie-dl]:         https://github.com/bkaradzic/GENie#download-stable  "bkaradzic/GENie"
+[android-cmake]:    https://github.com/taka-no-me/android-cmake         "taka-no-me/android-cmake"
 [boost::context]:   https://github.com/boostorg/context                 "boostorg/context"
+[CMake]:            https://cmake.org                                   "CMake"

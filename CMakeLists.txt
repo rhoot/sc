@@ -20,15 +20,19 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         elseif(CMAKE_CL_64 EQUAL 2)
             set(SC_TARGET_CPU "arm")
         endif()
-    elseif(NOT SC_TARGET_CPU)
+    else()
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
             set(SC_TARGET_CPU "x86_64")
         else()
             set(SC_TARGET_CPU "i386")
         endif()
     endif()
-elseif(NOT SC_TARGET_CPU)
-    set(SC_TARGET_CPU ${CMAKE_SYSTEM_PROCESSOR})
+else()
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+        set(SC_TARGET_CPU "arm")
+    else()
+        set(SC_TARGET_CPU ${CMAKE_SYSTEM_PROCESSOR})
+    endif()
 endif()
 
 
@@ -84,7 +88,11 @@ add_library(sc STATIC
 
     # Linux
     $<$<PLATFORM_ID:Linux>:src/asm/jump_${SC_TARGET_CPU}_sysv_elf_gas.s>
-    $<$<PLATFORM_ID:Linux>:src/asm/make_${SC_TARGET_CPU}_sysv_elf_gas.s>)
+    $<$<PLATFORM_ID:Linux>:src/asm/make_${SC_TARGET_CPU}_sysv_elf_gas.s>
+
+    # Android
+    $<$<PLATFORM_ID:Android>:src/asm/jump_${SC_TARGET_CPU}_aapcs_elf_gas.s>
+    $<$<PLATFORM_ID:Android>:src/asm/make_${SC_TARGET_CPU}_aapcs_elf_gas.s>)
 
 target_compile_definitions(sc
     PRIVATE
@@ -123,15 +131,10 @@ add_executable(sc_tests
 
 target_compile_options(sc_tests
     PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-Wall -Werror>
-        $<$<CXX_COMPILER_ID:Clang>:-Wall -Werror>
-        $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Werror>
+        $<$<CXX_COMPILER_ID:GNU>:-Wall -Werror -std=c++0x>
+        $<$<CXX_COMPILER_ID:Clang>:-Wall -Werror -std=c++0x>
+        $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Werror -std=c++0x>
         $<$<CXX_COMPILER_ID:MSVC>:/W3 /WX>)
-
-target_compile_features(sc_tests
-    PRIVATE
-        cxx_auto_type
-        cxx_nullptr)
 
 target_include_directories(sc_tests
     PRIVATE
