@@ -19,15 +19,27 @@ namespace {
 
     void SC_CALL_DECL set_to_true_proc (void* param) {
         *(bool*)param = true;
-        sc_yield(sc_main_context(), nullptr);
+        sc_yield(nullptr);
     }
 
     void SC_CALL_DECL yield_current_proc (void*) {
-        sc_yield(sc_main_context(), sc_current_context());
+        sc_yield(sc_current_context());
     }
 
     void SC_CALL_DECL yield_main_proc (void*) {
-        sc_yield(sc_main_context(), sc_main_context());
+        sc_yield(sc_main_context());
+    }
+
+    void SC_CALL_DECL yield_parent_proc (void*) {
+        sc_yield(sc_parent_context());
+    }
+
+    void SC_CALL_DECL recursive_proc (void*) {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), yield_main_proc);
+        auto yielded = sc_switch(context, NULL);
+        sc_context_destroy(context);
+        sc_yield(yielded);
     }
 
 } // namespace
@@ -43,7 +55,7 @@ DESCRIBE("sc_context_create") {
 
         uint8_t stack[SC_MIN_STACK_SIZE];
         auto context = sc_context_create(stack, sizeof(stack), set_to_true_proc);
-        sc_yield(context, &result);
+        sc_switch(context, &result);
         sc_context_destroy(context);
 
         REQUIRE(result == true);
@@ -66,10 +78,10 @@ DESCRIBE("sc_context_destroy") {
 }
 
 //
-// sc_yield tests
+// sc_switch tests
 //
 
-DESCRIBE("sc_yield") {
+DESCRIBE("sc_switch") {
 
     GIVEN("a valid context") {
         IT("should switch to that context") {
@@ -77,7 +89,7 @@ DESCRIBE("sc_yield") {
 
             uint8_t stack[SC_MIN_STACK_SIZE];
             auto context = sc_context_create(stack, sizeof(stack), set_to_true_proc);
-            sc_yield(context, &executed);
+            sc_switch(context, &executed);
             sc_context_destroy(context);
 
             REQUIRE(executed == true);
@@ -87,9 +99,26 @@ DESCRIBE("sc_yield") {
     GIVEN("the current context") {
         IT("should return the passed-in value") {
             int marker;
-            auto result = sc_yield(sc_current_context(), &marker);
+            auto result = sc_switch(sc_current_context(), &marker);
             REQUIRE(result == &marker);
         }
+    }
+
+}
+
+//
+// sc_yield tests
+//
+
+DESCRIBE("sc_yield") {
+
+    IT("should switch to the parent context") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), recursive_proc);
+        auto yielded = sc_switch(context, NULL);
+        sc_context_destroy(context);
+
+        REQUIRE(yielded == sc_main_context());
     }
 
 }
@@ -107,10 +136,27 @@ DESCRIBE("sc_current_context") {
     IT("should return the sc_context_t of the currently executing context") {
         uint8_t stack[SC_MIN_STACK_SIZE];
         auto context = sc_context_create(stack, sizeof(stack), yield_current_proc);
-        auto current = sc_yield(context, nullptr);
+        auto current = sc_switch(context, nullptr);
         sc_context_destroy(context);
 
         REQUIRE(context == current);
+    }
+
+}
+
+//
+// sc_parent_context tests
+//
+
+DESCRIBE("sc_parent_context") {
+
+    IT("should return the parent context") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), yield_parent_proc);
+        auto parent = sc_switch(context, nullptr);
+        sc_context_destroy(context);
+
+        REQUIRE(sc_main_context() == parent);
     }
 
 }
@@ -124,7 +170,7 @@ DESCRIBE("sc_main_context") {
     IT("should always return the main context") {
         uint8_t stack[SC_MIN_STACK_SIZE];
         auto context = sc_context_create(stack, sizeof(stack), yield_main_proc);
-        auto main = sc_yield(context, nullptr);
+        auto main = sc_switch(context, nullptr);
         sc_context_destroy(context);
 
         REQUIRE(sc_main_context() == main);

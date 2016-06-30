@@ -56,18 +56,39 @@ extern "C" {
      **                `sc_main_context`). */
     void SC_CALL_DECL sc_context_destroy (sc_context_t context);
 
-    /** Yield execution to another context, returning control to it, and
+    /** Switch execution to another context, returning control to it, and
      ** passing the given value to it. Returns the value passed to
-     ** `sc_yield` when control is returned to the calling context.
+     ** `sc_switch` or `sc_yield` when control is returned to this context.
      **
      ** * `target`: Context to switch control to. Must be a valid context
      **             created by `sc_context_create`, or returned by
      **             `sc_main_context`.
      ** * `value`: Value to pass to the target context. */
-    void* SC_CALL_DECL sc_yield (sc_context_t target, void* value);
+    void* SC_CALL_DECL sc_switch (sc_context_t target, void* value);
+
+    /** Yields execution to the parent context, returning control to it, and
+     ** passing the given value to it. Returns the value passed to `sc_switch`
+     ** or `sc_yield` when control is returned to this context.
+     **
+     ** * `value`: Value to pass to the target context.
+     **
+     ** **Note:** The *parent context* is the context that created this
+     **           context. It is up to the caller to ensure that the parent
+     **           context is still valid.
+     **
+     ** **Important:** This should not be called from the main context
+     **                (returned by `sc_main_context`), as it does not have a
+     **                parent. Doing so triggers an assert in debug builds,
+     **                and undefined behavior in release builds. */
+    void* SC_CALL_DECL sc_yield (void* value);
 
     /** Get the handle for the currently executing context. */
     sc_context_t SC_CALL_DECL sc_current_context ();
+
+    /** Get the handle for the currently executing context's parent context.
+     ** The parent context is the context that created this context. If the
+     ** currently executing context is the main context, NULL is returned. */
+    sc_context_t SC_CALL_DECL sc_parent_context ();
 
     /** Get the handle for this thread's main context. */
     sc_context_t SC_CALL_DECL sc_main_context ();

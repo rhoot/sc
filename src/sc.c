@@ -29,6 +29,7 @@
 typedef struct sc_context {
     fcontext_t fctx;
     sc_context_proc_t proc;
+    sc_context_t parent;
 } context_data;
 
 THREAD_LOCAL context_data t_main;
@@ -98,6 +99,7 @@ sc_context_t SC_CALL_DECL sc_context_create (
     /* Create the context data at the reserved address */
     data = (context_data*)data_addr;
     data->proc = proc;
+    data->parent = sc_current_context();
 
     /* Transfer the proc pointer to the context by briefly switching to it */
     data->fctx = jump_fcontext(fctx, data).fctx;
@@ -115,7 +117,7 @@ void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
     (void)context;
 }
 
-void* SC_CALL_DECL sc_yield (sc_context_t target, void* value) {
+void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
     context_data* this_ctx = sc_current_context();
     transfer_t transfer;
 
@@ -131,8 +133,18 @@ void* SC_CALL_DECL sc_yield (sc_context_t target, void* value) {
     return value;
 }
 
+void* SC_CALL_DECL sc_yield (void* value) {
+    context_data* current = sc_current_context();
+    assert(current->parent != NULL);
+    return sc_switch(current->parent, value);
+}
+
 sc_context_t SC_CALL_DECL sc_current_context () {
     return t_current ? t_current : &t_main;
+}
+
+sc_context_t SC_CALL_DECL sc_parent_context () {
+    return sc_current_context()->parent;
 }
 
 sc_context_t SC_CALL_DECL sc_main_context () {
