@@ -63,9 +63,9 @@ namespace {
     void SC_CALL_DECL test_xmm_registers_proc (void* base) {
         auto baseIndex = *(int*)base;
         init_xmm_registers(baseIndex);
-        sc_yield(sc_main_context(), nullptr);
+        sc_yield(nullptr);
         auto success = verify_xmm_registers(baseIndex);
-        sc_yield(sc_main_context(), &success);
+        sc_yield(&success);
     }
 
 }
@@ -81,7 +81,7 @@ DESCRIBE("Windows x64 ABI") {
 
         uint8_t stack[SC_MIN_STACK_SIZE];
         auto context = sc_context_create(stack, sizeof(stack), get_rsp_proc);
-        sc_yield(context, &rsp);
+        sc_switch(context, &rsp);
         sc_context_destroy(context);
 
         // While the alignment should be at 16 bytes, that is before the
@@ -101,14 +101,14 @@ DESCRIBE("Windows x64 ABI") {
         init_xmm_registers(mainBase);
 
         // Allow the context to set *its* non-volatile XMM registers
-        sc_yield(context, (int*)&ctxBase);
+        sc_switch(context, (int*)&ctxBase);
 
         // Verify that the registers are still what we originally set them to
         auto verified = verify_xmm_registers(mainBase);
         REQUIRE(verified == true);
 
         // Allow the context to verify *its* registers
-        verified = *(bool*)sc_yield(context, NULL);
+        verified = *(bool*)sc_switch(context, NULL);
         REQUIRE(verified == true);
 
         sc_context_destroy(context);
