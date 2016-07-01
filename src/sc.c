@@ -32,8 +32,8 @@ typedef struct sc_context {
     sc_context_t parent;
 } context_data;
 
-THREAD_LOCAL context_data t_main;
-THREAD_LOCAL context_data* t_current;
+static THREAD_LOCAL context_data t_main;
+static THREAD_LOCAL context_data* t_current;
 
 static uintptr_t align_down (uintptr_t addr, uintptr_t alignment) {
     assert(alignment > 0);
