@@ -1,3 +1,8 @@
+# ---
+#  Copyright (c) 2016 Johan Sköld
+#  License: https://opensource.org/licenses/ISC
+# ---
+
 cmake_minimum_required(VERSION 3.3)
 project(sc)
 enable_language(C CXX)
@@ -67,6 +72,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND SC_TARGET_CPU STREQUAL "i386")
     set(CMAKE_ASM_MASM_FLAGS "${CMAKE_ASM_MASM_FLAGS} /safeseh")
 endif()
 
+if(CMAKE_OSX_SYSROOT)
+    set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+endif()
+
 #
 # sc
 #
@@ -84,9 +93,9 @@ add_library(sc STATIC
     $<$<AND:$<PLATFORM_ID:Windows>,$<NOT:$<C_COMPILER_ID:MSVC>>>:src/asm/jump_${SC_TARGET_CPU}_ms_pe_gas.s>
     $<$<AND:$<PLATFORM_ID:Windows>,$<NOT:$<C_COMPILER_ID:MSVC>>>:src/asm/make_${SC_TARGET_CPU}_ms_pe_gas.s>
 
-    # OSX
-    $<$<PLATFORM_ID:Darwin>:src/asm/jump_i386_x86_64_sysv_macho_gas.s>
-    $<$<PLATFORM_ID:Darwin>:src/asm/make_i386_x86_64_sysv_macho_gas.s>
+    # OSX / iOS
+    $<$<PLATFORM_ID:Darwin>:src/asm/jump_universal_macho_gas.s>
+    $<$<PLATFORM_ID:Darwin>:src/asm/make_universal_macho_gas.s>
 
     # Linux
     $<$<PLATFORM_ID:Linux>:src/asm/jump_${SC_TARGET_CPU}_sysv_elf_gas.s>
