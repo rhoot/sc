@@ -4,41 +4,6 @@ enable_language(C CXX)
 
 
 #
-# Normalized target CPU
-#
-
-if(SC_FORCE_32BIT)
-    set(SC_TARGET_CPU "i386")
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    if(MSVC)
-        if(CMAKE_CL_64 EQUAL 0)
-            set(SC_TARGET_CPU "i386")
-        elseif(CMAKE_CL_64 EQUAL 1)
-            set(SC_TARGET_CPU "x86_64")
-        elseif(CMAKE_CL_64 EQUAL 2)
-            set(SC_TARGET_CPU "arm")
-        endif()
-    elseif(NOT SC_TARGET_CPU)
-        if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
-            set(SC_TARGET_CPU "x86_64")
-        else()
-            set(SC_TARGET_CPU "i386")
-        endif()
-    endif()
-elseif(NOT SC_TARGET_CPU)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
-        set(SC_TARGET_CPU "arm")
-    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
-        set(SC_TARGET_CPU "i386")
-    else()
-        set(SC_TARGET_CPU ${CMAKE_SYSTEM_PROCESSOR})
-    endif()
-endif()
-
-
-#
 # Compiler options
 #
 
@@ -63,7 +28,7 @@ endif()
 # `/safeseh` is only used for assembly (not C), and there is no support for
 # `$<COMPILE_LANGUAGE:...>` in Visual Studio.
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND SC_TARGET_CPU STREQUAL "i386")
+if(MSVC AND CMAKE_CL_64 EQUAL 0)
     set(CMAKE_ASM_MASM_FLAGS "${CMAKE_ASM_MASM_FLAGS} /safeseh")
 endif()
 
@@ -74,39 +39,23 @@ endif()
 add_library(sc STATIC
     include/sc.h
     src/fcontext.h
-    src/sc.c
+    src/sc.c)
 
-    # Windows (MSVC)
-    $<$<C_COMPILER_ID:MSVC>:src/asm/jump_${SC_TARGET_CPU}_ms_pe_masm.asm>
-    $<$<C_COMPILER_ID:MSVC>:src/asm/make_${SC_TARGET_CPU}_ms_pe_masm.asm>
-
-    # Windows (MinGW/MSYS)
-    $<$<AND:$<PLATFORM_ID:Windows>,$<NOT:$<C_COMPILER_ID:MSVC>>>:src/asm/jump_${SC_TARGET_CPU}_ms_pe_gas.s>
-    $<$<AND:$<PLATFORM_ID:Windows>,$<NOT:$<C_COMPILER_ID:MSVC>>>:src/asm/make_${SC_TARGET_CPU}_ms_pe_gas.s>
-
-    # OSX
-    $<$<PLATFORM_ID:Darwin>:src/asm/jump_i386_x86_64_sysv_macho_gas.s>
-    $<$<PLATFORM_ID:Darwin>:src/asm/make_i386_x86_64_sysv_macho_gas.s>
-
-    # Linux
-    $<$<PLATFORM_ID:Linux>:src/asm/jump_${SC_TARGET_CPU}_sysv_elf_gas.s>
-    $<$<PLATFORM_ID:Linux>:src/asm/make_${SC_TARGET_CPU}_sysv_elf_gas.s>
-
-    # Android (arm)
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},arm>>:src/asm/jump_arm_aapcs_elf_gas.s>
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},arm>>:src/asm/make_arm_aapcs_elf_gas.s>
-
-    # Android (mips)
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},mips>>:src/asm/jump_mips32_o32_elf_gas.s>
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},mips>>:src/asm/make_mips32_o32_elf_gas.s>
-
-    # Android (x86)
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},i386>>:src/asm/jump_i386_sysv_elf_gas.s>
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},i386>>:src/asm/make_i386_sysv_elf_gas.s>
-
-    # Android (x86_64)
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:src/asm/jump_x86_64_sysv_elf_gas.s>
-    $<$<AND:$<PLATFORM_ID:Android>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:src/asm/make_x86_64_sysv_elf_gas.s>)
+if(MSVC)
+    if(CMAKE_CL_64 EQUAL 0)
+        target_sources(sc PRIVATE
+            src/asm/jump_i386_ms_pe_masm.asm
+            src/asm/make_i386_ms_pe_masm.asm)
+    else()
+        target_sources(sc PRIVATE
+            src/asm/jump_x86_64_ms_pe_masm.asm
+            src/asm/make_x86_64_ms_pe_masm.asm)
+    endif()
+else()
+    target_sources(sc PRIVATE
+        src/asm/jump_gas.S
+        src/asm/make_gas.S)
+endif()
 
 target_compile_definitions(sc
     PRIVATE
@@ -131,17 +80,23 @@ add_executable(sc_tests
     tests/framework.hpp
     tests/main.cpp
     tests/sc_tests.cpp
-    tests/win_abi_tests.cpp
+    tests/win_abi_tests.cpp)
 
-    # Windows (MSVC, x86_64)
-    $<$<AND:$<C_COMPILER_ID:MSVC>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:tests/asm/get_rsp_proc_x86_64_ms_pe_masm.asm>
-    $<$<AND:$<C_COMPILER_ID:MSVC>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:tests/asm/get_xmm_register_x86_64_ms_pe_masm.asm>
-    $<$<AND:$<C_COMPILER_ID:MSVC>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:tests/asm/set_xmm_register_x86_64_ms_pe_masm.asm>
-
-    # Windows (MinGW/MSYS, x86_64)
-    $<$<AND:$<PLATFORM_ID:Windows>,$<NOT:$<C_COMPILER_ID:MSVC>>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:tests/asm/get_rsp_proc_x86_64_ms_pe_gas.s>
-    $<$<AND:$<PLATFORM_ID:Windows>,$<NOT:$<C_COMPILER_ID:MSVC>>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:tests/asm/get_xmm_register_x86_64_ms_pe_gas.s>
-    $<$<AND:$<PLATFORM_ID:Windows>,$<NOT:$<C_COMPILER_ID:MSVC>>,$<STREQUAL:${SC_TARGET_CPU},x86_64>>:tests/asm/set_xmm_register_x86_64_ms_pe_gas.s>)
+if(MSVC)
+    if(CMAKE_CL_64 EQUAL 1)
+        target_sources(sc_tests PRIVATE
+            tests/asm/get_rsp_proc_x86_64_ms_pe_masm.asm
+            tests/asm/get_xmm_register_x86_64_ms_pe_masm.asm
+            tests/asm/set_xmm_register_x86_64_ms_pe_masm.asm)
+    endif()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        target_sources(sc_tests PRIVATE
+            tests/asm/get_rsp_proc_x86_64_ms_pe_gas.s
+            tests/asm/get_xmm_register_x86_64_ms_pe_gas.s
+            tests/asm/set_xmm_register_x86_64_ms_pe_gas.s)
+    endif()
+endif()
 
 target_compile_options(sc_tests
     PRIVATE
