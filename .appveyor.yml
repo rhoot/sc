@@ -8,7 +8,7 @@ environment:
         - TOOLSET: Visual Studio 14 2015
 
 build_script:
-    - scripts\build_and_test.bat Debug
-    - scripts\build_and_test.bat Release
-    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build_and_test.bat Debug Win64
-    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build_and_test.bat Release Win64
+    - scripts\build-windows.bat Debug
+    - scripts\build-windows.bat Release
+    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build-windows.bat Debug Win64
+    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build-windows.bat Release Win64
