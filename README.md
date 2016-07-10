@@ -8,7 +8,7 @@ Supported platforms:
 |         | arm | mips | universal | x86 | x86_64 |
 |---------|-----|------|-----------|-----|--------|
 | Android |  ✓  |   ✓  |           |  ✓  |    ✓   |
-| Linux   |     |      |           |  ✓  |    ✓   |
+| Linux   |  ✓  |      |           |  ✓  |    ✓   |
 | OSX     |     |      |     ✓     |  ✓  |    ✓   |
 | Windows |     |      |           |  ✓  |    ✓   |
 
