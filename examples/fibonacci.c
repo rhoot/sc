@@ -10,7 +10,7 @@
  * created it, in this case the implicitly created main context) will receive
  * the next number in the sequence.
  *
- *   cc -I../include -L../build/lib -lsc fibonacci.c -o fibonacci
+ *   cc -I../include -L../build/lib fibonacci.c -lsc -o fibonacci
 */
 
 #include <sc.h>
@@ -40,6 +40,9 @@ static void fibonacci (void* param) {
 }
 
 int main(int argc, char** argv) {
+    int i;
+    void* fib;
+
     /* Create the fibonacci context. Since the current context will not be
        leaving this function before the end of the fibonacci context's
        lifetime, it is safe to put the new context's stack on this stack. As
@@ -49,11 +52,11 @@ int main(int argc, char** argv) {
 
     /* Print the first 10 numbers yielded by the fibonacci sequence
        generator. */
-    for (int i = 0; i < 10; ++i) {
+    for (i = 0; i < 10; ++i) {
         /* `sc_yield` returns control to the parent (or creator) context.
            Since the context we want to switch to is not our parent, we must
            instead use `sc_switch`. */
-        void* fib = sc_switch(context, NULL);
+        fib = sc_switch(context, NULL);
 
         /* As with the stack of the new context, since the fibonacci stack
            still exists, it is safe to directly reference variables on its

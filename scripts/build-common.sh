@@ -26,5 +26,5 @@ travis_retry() {
 build_example() {
     local name="$1"
     shift 1
-    cc -Wall -Werror $@ -I../include -L../build/lib -lsc -o "$name" "$name.c"
+    cc -Wall -Werror $@ -I../include -L../build/lib "$name.c" -lsc -o "$name"
 }
