@@ -17,7 +17,7 @@ if brew outdated --quiet | grep -qx cmake; then brew upgrade cmake; fi
 # Build library and tests
 mkdir build
 cd build
-cmake -DCMAKE_OSX_ARCHITECTURES="$arch" -DCMAKE_BUILD_TYPE="$config" ..
+cmake -DCMAKE_OSX_ARCHITECTURES="$arch_list" -DCMAKE_BUILD_TYPE="$config" ..
 make VERBOSE=1
 
 # Run tests
