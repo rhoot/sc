@@ -10,7 +10,7 @@
  * created it, in this case the implicitly created main context) will receive
  * the next number in the sequence.
  *
- *   gcc -I../include -L../build/lib -lsc fibonacci.c -o fibonacci
+ *   cc -I../include -L../build/lib -lsc fibonacci.c -o fibonacci
 */
 
 #include <sc.h>

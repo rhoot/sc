@@ -39,4 +39,20 @@ else
     file bin/sc_tests
     bin/sc_tests --reporter console
 
+    # Build and run examples
+    cd ../examples
+
+    for file in $(ls *.c); do
+        example_name="${file%.*}"
+
+        if [[ "$arch" == "i386" ]]; then
+            build_example "$example_name" -m32
+        else
+            build_example "$example_name"
+        fi
+
+        file "$example_name"
+        "./$example_name" > /dev/null
+    done
+
 fi
