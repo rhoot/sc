@@ -6,6 +6,7 @@ Cross platform co-routine library exposed through a minimal C API.
 |         | arm | mips | universal | x86 | x86_64 |
 |---------|-----|------|-----------|-----|--------|
 | Android |  ✓  |   ✓  |           |  ✓  |    ✓   |
+| FreeBSD |     |      |           |     |    ✓   |
 | Linux   |  ✓  |      |           |  ✓  |    ✓   |
 | OSX     |     |      |     ✓     |  ✓  |    ✓   |
 | Windows |     |      |           |  ✓  |    ✓   |
