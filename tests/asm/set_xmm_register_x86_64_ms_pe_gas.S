@@ -13,7 +13,7 @@ set_xmm_register:
 .seh_endprologue
 
     /* First argument (rcx) = register to set */
-    /* Second argument (xmm0) = value to set it to */
+    /* Second argument (rdx) = value to set it to */
 
     cmpq $6, %rcx
     je   set_6
@@ -36,43 +36,43 @@ set_xmm_register:
     jmp  set_15
 
 set_6:
-    movdqa  %xmm0, %xmm6
+    movdqa  (%rdx), %xmm6
     ret
 
 set_7:
-    movdqa  %xmm0, %xmm7
+    movdqa  (%rdx), %xmm7
     ret
 
 set_8:
-    movdqa  %xmm0, %xmm8
+    movdqa  (%rdx), %xmm8
     ret
 
 set_9:
-    movdqa  %xmm0, %xmm9
+    movdqa  (%rdx), %xmm9
     ret
 
 set_10:
-    movdqa  %xmm0, %xmm10
+    movdqa  (%rdx), %xmm10
     ret
 
 set_11:
-    movdqa  %xmm0, %xmm11
+    movdqa  (%rdx), %xmm11
     ret
 
 set_12:
-    movdqa  %xmm0, %xmm12
+    movdqa  (%rdx), %xmm12
     ret
 
 set_13:
-    movdqa  %xmm0, %xmm13
+    movdqa  (%rdx), %xmm13
     ret
 
 set_14:
-    movdqa  %xmm0, %xmm14
+    movdqa  (%rdx), %xmm14
     ret
 
 set_15:
-    movdqa  %xmm0, %xmm15
+    movdqa  (%rdx), %xmm15
     ret
 
 .seh_endproc

@@ -13,7 +13,6 @@ get_xmm_register:
 .seh_endprologue
 
     /* First argument (rcx) = register to get */
-    /* Return value (xmm0) = value of the register */
 
     cmpq $6, %rcx
     je   get_6

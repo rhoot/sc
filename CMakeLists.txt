@@ -90,7 +90,7 @@ if(MSVC)
             tests/asm/set_xmm_register_x86_64_ms_pe_masm.asm)
     endif()
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" AND NOT SC_FORCE_32BIT)
         target_sources(sc_tests PRIVATE
             tests/asm/get_rsp_proc_x86_64_ms_pe_gas.s
             tests/asm/get_xmm_register_x86_64_ms_pe_gas.s
