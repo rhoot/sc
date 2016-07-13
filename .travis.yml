@@ -3,24 +3,40 @@ language: cpp
 sudo: required
 dist: trusty
 
-os:
-    - linux
-    - osx
-
-env:
-    - config=Debug cpu=i386
-    - config=Debug cpu=x86_64
-    - config=Debug cpu=i386;x86_64
-    - config=Release cpu=i386
-    - config=Release cpu=x86_64
-    - config=Release cpu=i386;x86_64
+services:
+    - docker
 
 matrix:
-    exclude:
+    include:
         - os: linux
-          env: config=Debug cpu=i386;x86_64
+          env: arch=i386 config=Debug
         - os: linux
-          env: config=Release cpu=i386;x86_64
+          env: arch=i386 config=Release
+
+        - os: linux
+          env: arch=x86_64 config=Debug
+        - os: linux
+          env: arch=x86_64 config=Release
+
+        - os: linux
+          env: arch=arm config=Debug
+        - os: linux
+          env: arch=arm config=Release
+
+        - os: osx
+          env: arch=i386 config=Debug
+        - os: osx
+          env: arch=i386 config=Release
+
+        - os: osx
+          env: arch=x86_64 config=Debug
+        - os: osx
+          env: arch=x86_64 config=Release
+
+        - os: osx
+          env: arch=universal config=Debug
+        - os: osx
+          env: arch=universal config=Release
 
 addons:
     apt:
@@ -29,30 +45,5 @@ addons:
             - gcc-multilib
             - g++-multilib
 
-# Ensure we have a recent-ish CMake version
-install:
-    - |
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-            CMAKE_URL="http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz"
-            mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-            export PATH="$(pwd)/cmake/bin:$PATH"
-        else
-            brew update
-            if brew outdated --quiet | grep -qx cmake; then brew upgrade cmake; fi
-        fi
-
 script:
-    - cmake --version
-    - mkdir build && cd build
-    - |
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-            if [[ "$cpu" == "i386" ]]; then
-                cmake -DCMAKE_BUILD_TYPE="$config" -DSC_FORCE_32BIT=1 ..
-            else
-                cmake -DCMAKE_BUILD_TYPE="$config" ..
-            fi
-        else
-            cmake -DCMAKE_BUILD_TYPE="$config" -DCMAKE_OSX_ARCHITECTURES="$cpu" ..
-        fi
-    - make VERBOSE=1
-    - bin/sc_tests --reporter console
+    - "scripts/build-${TRAVIS_OS_NAME}.sh"

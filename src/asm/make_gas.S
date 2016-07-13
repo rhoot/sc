@@ -1,0 +1,41 @@
+#if defined(_WIN32)
+
+    #if defined(__i386__)
+        #include "make_i386_ms_pe_gas.s"
+    #elif defined(__x86_64__)
+        #include "make_x86_64_ms_pe_gas.s"
+    #else
+        #error "Unsupported architecture"
+    #endif
+
+#elif defined(__APPLE__)
+
+    #if defined(__i386__)
+        #include "make_i386_sysv_macho_gas.s"
+    #elif defined(__x86_64__)
+        #include "make_x86_64_sysv_macho_gas.s"
+    #elif defined(__arm__)
+        #include "make_arm_aapcs_macho_gas.s"
+    #elif defined(__arm64__)
+        #include "make_arm64_aapcs_macho_gas.s"
+    #else
+        #error "Unsupported architecture"
+    #endif
+
+#else
+
+    #if defined(__i386__)
+        #include "make_i386_sysv_elf_gas.s"
+    #elif defined(__x86_64__)
+        #include "make_x86_64_sysv_elf_gas.s"
+    #elif defined(__arm__)
+        #include "make_arm_aapcs_elf_gas.s"
+    #elif defined(__arm64__)
+        #include "make_arm64_aapcs_elf_gas.s"
+    #elif defined(__mips32__)
+        #include "make_mips32_o32_elf_gas.s"
+    #else
+        #error "Unsupported architecture"
+    #endif
+
+#endif
