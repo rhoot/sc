@@ -11,7 +11,7 @@ endif()
 
 set(CMAKE_OSX_ARCHITECTURES ${IOS_ARCHITECTURES} CACHE string  "Build architecture for iOS")
 
-set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphonesimulator")
+set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphoneos")
 
 if(NOT DEFINED IOS_DEVELOPER_PATH)
     set(IOS_DEVELOPER_PATH "/Applications/Xcode.app/Contents/Developer")
@@ -31,9 +31,9 @@ set(CMAKE_C_COMPILER_WORKS   TRUE)
 set(CMAKE_CXX_COMPILER_WORKS TRUE)
 
 # iOS SDK
-set(CMAKE_FIND_ROOT_PATH ${IOS_DEVELOPER_PATH}/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk)
-set(CMAKE_IOS_SDK_PATH   ${IOS_DEVELOPER_PATH}/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk)
-set(CMAKE_OSX_SYSROOT    ${IOS_DEVELOPER_PATH}/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator9.3.sdk)
+set(CMAKE_FIND_ROOT_PATH ${IOS_DEVELOPER_PATH}/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk)
+set(CMAKE_IOS_SDK_PATH   ${IOS_DEVELOPER_PATH}/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk)
+set(CMAKE_OSX_SYSROOT    ${IOS_DEVELOPER_PATH}/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk)
 
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
