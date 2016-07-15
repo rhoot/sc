@@ -1,3 +1,8 @@
+# ---
+#  Copyright (c) 2016 Johan Sköld
+#  License: https://opensource.org/licenses/ISC
+# ---
+
 cmake_minimum_required(VERSION 3.3)
 project(sc)
 enable_language(C CXX)
@@ -30,6 +35,10 @@ endif()
 
 if(MSVC AND CMAKE_CL_64 EQUAL 0)
     set(CMAKE_ASM_MASM_FLAGS "${CMAKE_ASM_MASM_FLAGS} /safeseh")
+endif()
+
+if(CMAKE_OSX_SYSROOT)
+    set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
 endif()
 
 #
@@ -96,6 +105,14 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
             tests/asm/get_xmm_register_x86_64_ms_pe_gas.s
             tests/asm/set_xmm_register_x86_64_ms_pe_gas.s)
     endif()
+endif()
+
+if(IOS)
+    set_target_properties(sc_tests PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_GUI_IDENTIFIER "cc.skold.sc_tests"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/scripts/ios-info.plist.in"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "cc.skold.sc_tests")
 endif()
 
 target_compile_options(sc_tests

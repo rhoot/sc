@@ -22,6 +22,14 @@
 #   define ALIGNOF(x)   __alignof__(x)
 #endif
 
+/* Apple doesn't support __thread on arm platforms, and they have a bug in the
+ * x86 support, so we need to fall back to pthreads for these platforms. */
+#if defined(__APPLE__) && (defined(__arm__) || defined(__arm64__) || defined(__i386__))
+#   include <pthread.h>
+#   include <stdlib.h>  /* malloc, free */
+#   define USE_PTHREAD_SPECIFICS
+#endif
+
 /*
  * Private implementation
  */
@@ -32,8 +40,75 @@ typedef struct sc_context {
     sc_context_t parent;
 } context_data;
 
-static THREAD_LOCAL context_data t_main;
-static THREAD_LOCAL context_data* t_current;
+#if defined(USE_PTHREAD_SPECIFICS)
+    static pthread_key_t t_main;
+    static pthread_key_t t_current;
+
+    static void cleanup_main (void* main) {
+        free(main);
+    }
+
+    static void do_init_main_key () {
+        int error = pthread_key_create(&t_main, cleanup_main);
+        assert(error == 0);
+        (void)error;
+    }
+
+    static void init_main_key () {
+        static pthread_once_t s_once = PTHREAD_ONCE_INIT;
+        pthread_once(&s_once, do_init_main_key);
+    }
+
+    static void do_init_current_key () {
+        int error = pthread_key_create(&t_current, NULL);
+        assert(error == 0);
+        (void)error;
+    }
+
+    static void init_current_key () {
+        static pthread_once_t s_once = PTHREAD_ONCE_INIT;
+        pthread_once(&s_once, do_init_current_key);
+    }
+
+    static context_data* get_main () {
+        init_main_key();
+
+        void* data = pthread_getspecific(t_main);
+
+        if (!data) {
+            data = malloc(sizeof(context_data));
+            assert(data != NULL);
+            pthread_setspecific(t_main, data);
+        }
+
+        return (context_data*)data;
+    }
+
+    static void set_current (context_data* context) {
+        init_current_key();
+        pthread_setspecific(t_current, context);
+    }
+
+    static context_data* get_current () {
+        init_current_key();
+        return (context_data*)pthread_getspecific(t_current);
+    }
+#else
+    static THREAD_LOCAL context_data t_main;
+    static THREAD_LOCAL context_data* t_current;
+
+    static context_data* get_main () {
+        return &t_main;
+    }
+
+    static void set_current (context_data* context) {
+        t_current = context;
+    }
+
+    static context_data* get_current () {
+        return t_current;
+    }
+#endif
 
 static uintptr_t align_down (uintptr_t addr, uintptr_t alignment) {
     assert(alignment > 0);
@@ -50,7 +125,7 @@ static void context_proc (transfer_t transfer) {
 
     /* Update the current context */
     sc_current_context()->fctx = transfer.fctx;
-    t_current = data;
+    set_current(data);
 
     /* Execute the context proc */
     data->proc(transfer.data);
@@ -126,7 +201,7 @@ void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
     if (target != this_ctx) {
         transfer = jump_fcontext(target->fctx, value);
         sc_current_context()->fctx = transfer.fctx;
-        t_current = this_ctx;
+        set_current(this_ctx);
         value = transfer.data;
     }
 
@@ -140,7 +215,8 @@ void* SC_CALL_DECL sc_yield (void* value) {
 }
 
 sc_context_t SC_CALL_DECL sc_current_context () {
-    return t_current ? t_current : &t_main;
+    context_data* current = get_current();
+    return current ? current : get_main();
 }
 
 sc_context_t SC_CALL_DECL sc_parent_context () {
@@ -148,5 +224,5 @@ sc_context_t SC_CALL_DECL sc_parent_context () {
 }
 
 sc_context_t SC_CALL_DECL sc_main_context () {
-    return &t_main;
+    return get_main();
 }
