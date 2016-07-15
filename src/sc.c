@@ -22,9 +22,9 @@
 #   define ALIGNOF(x)   __alignof__(x)
 #endif
 
-/* Apple doesn't support __thread on arm platforms, so we need to fall back to
- * pthreads. */
-#if defined(__APPLE__) && (defined(__arm__) || defined(__arm64__))
+/* Apple doesn't support __thread on arm platforms, and they have a bug in the
+ * x86 support, so we need to fall back to pthreads for these platforms. */
+#if defined(__APPLE__) && (defined(__arm__) || defined(__arm64__) || defined(__i386__))
 #   include <pthread.h>
 #   include <stdlib.h>  /* malloc, free */
 #   define USE_PTHREAD_SPECIFICS

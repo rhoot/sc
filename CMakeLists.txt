@@ -107,6 +107,14 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     endif()
 endif()
 
+if(IOS)
+    set_target_properties(sc_tests PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_GUI_IDENTIFIER "cc.skold.sc_tests"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/scripts/ios-info.plist.in"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "cc.skold.sc_tests")
+endif()
+
 target_compile_options(sc_tests
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-Wall -Werror -std=c++0x>
