@@ -113,7 +113,7 @@ DESCRIBE("sc_switch") {
 DESCRIBE("sc_yield") {
 
     IT("should switch to the parent context") {
-        uint8_t stack[SC_MIN_STACK_SIZE * 2];
+        uint8_t stack[8192];
         auto context = sc_context_create(stack, sizeof(stack), recursive_proc);
         auto yielded = sc_switch(context, NULL);
         sc_context_destroy(context);
