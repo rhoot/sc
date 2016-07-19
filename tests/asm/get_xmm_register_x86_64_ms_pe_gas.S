@@ -3,6 +3,8 @@
  * License: https://opensource.org/licenses/ISC
  */
 
+#if defined(__WIN32__) && defined(__x86_64__)
+
 .file	"get_xmm_register_x86_64_ms_pe_gas.S"
 .text
 .p2align 4,,15
@@ -78,3 +80,5 @@ get_15:
 
 .section .drectve
 .ascii " -export:\"get_xmm_register\""
+
+#endif // defined(__WIN32__) && defined(__x86_64__)

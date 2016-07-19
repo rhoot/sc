@@ -3,6 +3,8 @@
  * License: https://opensource.org/licenses/ISC
  */
 
+#if defined(__WIN32__) && defined(__x86_64__)
+
 .file	"get_rsp_proc_x86_64_ms_pe_gas.S"
 .text
 .p2align 4,,15
@@ -32,3 +34,5 @@ get_rsp_proc:
 
 .section .drectve
 .ascii " -export:\"get_rsp_proc\""
+
+#endif // defined(__WIN32__) && defined(__x86_64__)
