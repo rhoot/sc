@@ -31,22 +31,26 @@ sc = {
 -- Toolchain file support (external overriding of compiler options).
 if _OPTIONS.toolchain then
     print("Using toolchain file: " .. _OPTIONS.toolchain)
-    dofile(_OPTIONS.toolchain)
+    dofile(path.getrelative(os.getcwd(), path.join(_WORKING_DIR, _OPTIONS.toolchain)))
 end
 
 solution "sc"
     sc.on_solution()
     configuration {}
 
-    configurations {
-        "Debug",
-        "Release",
-    }
+    if #(solution().configurations) == 0 then
+        configurations {
+            "Debug",
+            "Release",
+        }
+    end
 
-    if os.is("MacOSX") then
-        platforms {"Universal"}
-    else
-        platforms {"x32", "x64"}
+    if #(solution().platforms) == 0 then
+        if os.is("MacOSX") then
+            platforms {"Universal", "x32", "x64"}
+        else
+            platforms {"x32", "x64"}
+        end
     end
 
     flags {

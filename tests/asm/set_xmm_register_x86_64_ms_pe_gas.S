@@ -82,4 +82,4 @@ set_15:
 .section .drectve
 .ascii " -export:\"set_xmm_register\""
 
-#endif // defined(__WIN32__) && defined(__x86_64__)
+#endif /* defined(__WIN32__) && defined(__x86_64__) */

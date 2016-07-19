@@ -35,4 +35,4 @@ get_rsp_proc:
 .section .drectve
 .ascii " -export:\"get_rsp_proc\""
 
-#endif // defined(__WIN32__) && defined(__x86_64__)
+#endif /* defined(__WIN32__) && defined(__x86_64__) */
