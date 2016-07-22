@@ -86,37 +86,36 @@ make_fcontext PROC FRAME
 
     ; 160 bytes xmm storage, 8 bytes alignment, 168 bytes stack data
     sub  rax, 0150h
-    mov  r9, 0a8h
 
     ; third arg of make_fcontext() == address of context-function
-    mov  [rax+r9+068h], r8
+    mov  [rax+0110h], r8
 
     ; first arg of make_fcontext() == top of context-stack
     ; save top address of context stack as 'base'
-    mov  [rax+r9+018h], rcx
+    mov  [rax+0c0h], rcx
     ; second arg of make_fcontext() == size of context-stack
     ; negate stack size for LEA instruction (== substraction)
     neg  rdx
     ; compute bottom address of context stack (limit)
     lea  rcx, [rcx+rdx]
     ; save bottom address of context stack as 'limit'
-    mov  [rax+r9+010h], rcx
+    mov  [rax+0b8h], rcx
     ; save address of context stack limit as 'dealloction stack'
-    mov  [rax+r9+08h], rcx
+    mov  [rax+0b0h], rcx
     ; set fiber-storage to zero
     xor  rcx, rcx
-    mov  [rax+r9], rcx
+    mov  [rax+0a8h], rcx
 
     ; compute address of transport_t
-    lea rcx, [rax+r9+098h]
+    lea rcx, [rax+0140h]
     ; store address of transport_t in hidden field
-    mov [rax+r9+060h], rcx
+    mov [rax+0108h], rcx
 
     ; compute abs address of label finish
     lea  rcx, finish
     ; save address of finish as return-address for context-function
     ; will be entered after context-function returns
-    mov  [rax+r9+070h], rcx
+    mov  [rax+0118h], rcx
 
     ret ; return pointer to context-data
 
