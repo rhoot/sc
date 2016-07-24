@@ -10,9 +10,9 @@
    Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
 
    - 2016: XMM6-XMM15 must be preserved by the callee in Windows x64.
-;  - 2016: Using a `ret` instead of `jmp` to return to the return address. This
-;          seems to cause debuggers to better understand the stack, and results
-;          in proper backtraces.
+   - 2016: Using a `ret` instead of `jmp` to return to the return address. This
+           seems to cause debuggers to better understand the stack, and results
+           in proper backtraces.
 */
 
 /**************************************************************************************
