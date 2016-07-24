@@ -10,6 +10,12 @@
    Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
 
    - 2016: XMM6-XMM15 must be preserved by the callee in Windows x64.
+   - 2016: Reserving space for the parameter area in the unwind area, as well as
+           adding a NULL return address for make_fcontext so debuggers can reasonably
+           know they've reached the top. There unfortunately doesn't seem to be a way
+           to tell gdb that it reached the top (it just uses symbol files), but at
+           least an address of 0x0000000000000000 is quite a bit more obvious than a
+           random address.
 */
 
 /**************************************************************************************
@@ -66,7 +72,7 @@
  * ---------------------------------------------------------------------------------- *
  * |  0x140  |  0x144  |  0x148   |  0x14c  |  0x150  |  0x154  |  0x158  |  0x15c  | *
  * ---------------------------------------------------------------------------------- *
- * |       FCTX        |         DATA       |                   |                   | *
+ * |       NULL        |         FCTX       |        DATA       |       align       | *
  * ---------------------------------------------------------------------------------- *
  *                                                                                    *
  * ***********************************************************************************/
@@ -78,6 +84,7 @@
 .def	make_fcontext;	.scl	2;	.type	32;	.endef
 .seh_proc	make_fcontext
 make_fcontext:
+.seh_stackalloc 0x20
 .seh_endprologue
 
     /* first arg of make_fcontext() == top of context-stack */
@@ -91,47 +98,45 @@ make_fcontext:
     /* EXIT will be used as the return address for the context-function and */
     /* must have its end be 16-byte aligned */
 
-    /* 160 bytes xmm storage, 8 bytes alignment, 168 bytes stack data */
-    leaq  -0x150(%rax), %rax
-    movq  $0xa8, %r9
+    /* 160 bytes xmm storage, 8+8 bytes alignment, 176 bytes stack data */
+    subq  $0x160, %rax
 
     /* third arg of make_fcontext() == address of context-function */
-    movq  %r8, 0x68(%rax, %r9)
+    movq  %r8, 0x110(%rax)
 
     /* first arg of make_fcontext() == top of context-stack */
     /* save top address of context stack as 'base' */
-    movq  %rcx, 0x18(%rax, %r9)
+    movq  %rcx, 0xc0(%rax)
     /* second arg of make_fcontext() == size of context-stack */
     /* negate stack size for LEA instruction (== substraction) */
     negq  %rdx
     /* compute bottom address of context stack (limit) */
     leaq  (%rcx,%rdx), %rcx
     /* save bottom address of context stack as 'limit' */
-    movq  %rcx, 0x10(%rax, %r9)
+    movq  %rcx, 0xb8(%rax)
     /* save address of context stack limit as 'dealloction stack' */
-    movq  %rcx, 0x8(%rax, %r9)
+    movq  %rcx, 0xb0(%rax)
 	/* set fiber-storage to zero */
     xorq  %rcx, %rcx
-    movq  %rcx, (%rax, %r9)
+    movq  %rcx, 0xa8(%rax)
+
+    /* zero out make_fcontext's return address (rcx is still zero) */
+    movq  %rcx, 0x140(%rax)
 
     /* compute address of transport_t */
-    leaq  0x98(%rax, %r9), %rcx
+    leaq  0x148(%rax), %rcx
     /* store address of transport_t in hidden field */
-    movq %rcx, 0x60(%rax, %r9)
+    movq %rcx, 0x108(%rax)
 
     /* compute abs address of label finish */
     leaq  finish(%rip), %rcx
     /* save address of finish as return-address for context-function */
     /* will be entered after context-function returns */
-    movq  %rcx, 0x70(%rax, %r9)
+    movq  %rcx, 0x118(%rax)
 
     ret /* return pointer to context-data */
 
 finish:
-    /* 32byte shadow-space for _exit() */
-    andq  $-32, %rsp
-    /* 32byte shadow-space for _exit() are */
-    /* already reserved by make_fcontext() */
     /* exit code is zero */
     xorq  %rcx, %rcx
     /* exit application */

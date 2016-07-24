@@ -10,6 +10,9 @@
    Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
 
    - 2016: XMM6-XMM15 must be preserved by the callee in Windows x64.
+;  - 2016: Using a `ret` instead of `jmp` to return to the return address. This
+;          seems to cause debuggers to better understand the stack, and results
+;          in proper backtraces.
 */
 
 /**************************************************************************************
@@ -66,7 +69,7 @@
  * ---------------------------------------------------------------------------------- *
  * |  0x140  |  0x144  |  0x148   |  0x14c  |  0x150  |  0x154  |  0x158  |  0x15c  | *
  * ---------------------------------------------------------------------------------- *
- * |       FCTX        |         DATA       |                   |                   | *
+ * |       NULL        |         FCTX       |        DATA       |       align       | *
  * ---------------------------------------------------------------------------------- *
  *                                                                                    *
  * ***********************************************************************************/
@@ -170,9 +173,6 @@ jump_fcontext:
 
     popq  %rax  /* restore hidden address of transport_t */
 
-    /* restore return-address */
-    popq  %r10
-
     /* transport_t returned in RAX */
     /* return parent fcontext_t */
     movq  %r9, (%rax)
@@ -182,8 +182,8 @@ jump_fcontext:
     /* transport_t as 1.arg of context-function */
     movq  %rax, %rcx
 
-    /* indirect jump to context */
-    jmp  *%r10
+    /* return to return address */
+    ret
 .seh_endproc
 
 .section .drectve

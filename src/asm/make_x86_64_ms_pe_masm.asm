@@ -7,6 +7,9 @@
 ;  Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
 ;
 ;  - 2016: XMM6-XMM15 must be preserved by the callee in Windows x64.
+;  - 2016: Reserving space for the parameter area in the unwind area, as well as
+;          adding a NULL return address for make_fcontext so debuggers will know
+;          they've reached the top.
 
 ;  ----------------------------------------------------------------------------------
 ;  |    0x0  |    0x4  |    0x8   |    0xc  |   0x10  |   0x14  |   0x18  |   0x1c  |
@@ -61,7 +64,7 @@
 ;  ----------------------------------------------------------------------------------
 ;  |  0x140  |  0x144  |  0x148   |  0x14c  |  0x150  |  0x154  |  0x158  |  0x15c  |
 ;  ----------------------------------------------------------------------------------
-;  |       FCTX        |         DATA       |                   |                   |
+;  |       NULL        |         FCTX       |        DATA       |       align       |
 ;  ----------------------------------------------------------------------------------
 
 ; standard C library function
@@ -70,6 +73,12 @@ EXTERN  _exit:PROC
 
 ; generate function table entry in .pdata and unwind information in
 make_fcontext PROC FRAME
+    ; Tell the assembler we're allocating 32 bytes on the stack, to fit the
+    ; parameter area. This allows the debugger to see the NULL field just
+    ; above it as the return address from make_fcontext, causing it to realize
+    ; it's reached the top of the callstack.
+    .allocstack 020h
+
     ; .xdata for a function's structured exception handling unwind behavior
     .endprolog
 
@@ -84,8 +93,8 @@ make_fcontext PROC FRAME
     ; EXIT will be used as the return address for the context-function and
     ; must have its end be 16-byte aligned
 
-    ; 160 bytes xmm storage, 8 bytes alignment, 168 bytes stack data
-    sub  rax, 0150h
+    ; 160 bytes xmm storage, 8+8 bytes alignment, 176 bytes stack data
+    sub  rax, 0160h
 
     ; third arg of make_fcontext() == address of context-function
     mov  [rax+0110h], r8
@@ -106,8 +115,11 @@ make_fcontext PROC FRAME
     xor  rcx, rcx
     mov  [rax+0a8h], rcx
 
+    ; zero out make_fcontext's return address (rcx is still zero)
+    mov  [rax+0140h], rcx
+
     ; compute address of transport_t
-    lea rcx, [rax+0140h]
+    lea rcx, [rax+0148h]
     ; store address of transport_t in hidden field
     mov [rax+0108h], rcx
 
