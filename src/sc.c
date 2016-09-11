@@ -48,29 +48,29 @@ typedef struct sc_context {
         free(main);
     }
 
-    static void do_init_main_key () {
+    static void do_init_main_key (void) {
         int error = pthread_key_create(&t_main, cleanup_main);
         assert(error == 0);
         (void)error;
     }
 
-    static void init_main_key () {
+    static void init_main_key (void) {
         static pthread_once_t s_once = PTHREAD_ONCE_INIT;
         pthread_once(&s_once, do_init_main_key);
     }
 
-    static void do_init_current_key () {
+    static void do_init_current_key (void) {
         int error = pthread_key_create(&t_current, NULL);
         assert(error == 0);
         (void)error;
     }
 
-    static void init_current_key () {
+    static void init_current_key (void) {
         static pthread_once_t s_once = PTHREAD_ONCE_INIT;
         pthread_once(&s_once, do_init_current_key);
     }
 
-    static context_data* get_main () {
+    static context_data* get_main (void) {
         init_main_key();
 
         void* data = pthread_getspecific(t_main);
@@ -89,7 +89,7 @@ typedef struct sc_context {
         pthread_setspecific(t_current, context);
     }
 
-    static context_data* get_current () {
+    static context_data* get_current (void) {
         init_current_key();
         return (context_data*)pthread_getspecific(t_current);
     }
@@ -97,7 +97,7 @@ typedef struct sc_context {
     static THREAD_LOCAL context_data t_main;
     static THREAD_LOCAL context_data* t_current;
 
-    static context_data* get_main () {
+    static context_data* get_main (void) {
         return &t_main;
     }
 
@@ -105,7 +105,7 @@ typedef struct sc_context {
         t_current = context;
     }
 
-    static context_data* get_current () {
+    static context_data* get_current (void) {
         return t_current;
     }
 #endif
@@ -214,15 +214,15 @@ void* SC_CALL_DECL sc_yield (void* value) {
     return sc_switch(current->parent, value);
 }
 
-sc_context_t SC_CALL_DECL sc_current_context () {
+sc_context_t SC_CALL_DECL sc_current_context (void) {
     context_data* current = get_current();
     return current ? current : get_main();
 }
 
-sc_context_t SC_CALL_DECL sc_parent_context () {
+sc_context_t SC_CALL_DECL sc_parent_context (void) {
     return sc_current_context()->parent;
 }
 
-sc_context_t SC_CALL_DECL sc_main_context () {
+sc_context_t SC_CALL_DECL sc_main_context (void) {
     return get_main();
 }

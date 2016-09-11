@@ -83,15 +83,15 @@ extern "C" {
     void* SC_CALL_DECL sc_yield (void* value);
 
     /** Get the handle for the currently executing context. */
-    sc_context_t SC_CALL_DECL sc_current_context ();
+    sc_context_t SC_CALL_DECL sc_current_context (void);
 
     /** Get the handle for the currently executing context's parent context.
      ** The parent context is the context that created this context. If the
      ** currently executing context is the main context, NULL is returned. */
-    sc_context_t SC_CALL_DECL sc_parent_context ();
+    sc_context_t SC_CALL_DECL sc_parent_context (void);
 
     /** Get the handle for this thread's main context. */
-    sc_context_t SC_CALL_DECL sc_main_context ();
+    sc_context_t SC_CALL_DECL sc_main_context (void);
 
 #if defined(__cplusplus)
 } /* extern "C" */
