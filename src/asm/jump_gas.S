@@ -30,7 +30,7 @@
         #include "jump_x86_64_sysv_elf_gas.s"
     #elif defined(__arm__)
         #include "jump_arm_aapcs_elf_gas.s"
-    #elif defined(__arm64__)
+    #elif defined(__arm64__) || defined(__aarch64__)
         #include "jump_arm64_aapcs_elf_gas.s"
     #elif defined(__mips32__)
         #include "jump_mips32_o32_elf_gas.s"
