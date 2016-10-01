@@ -48,10 +48,10 @@ if(MSVC)
 
     if(CMAKE_CL_64 EQUAL 0)
         set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm PROPERTIES
-            COMPILE_FLAGS "/safeseh /D_WIN32")
+            COMPILE_FLAGS "/safeseh /DSC_WIN32")
     else()
         set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm PROPERTIES
-            COMPILE_FLAGS "/D_WIN64")
+            COMPILE_FLAGS "/DSC_WIN64")
     endif()
 else()
     target_sources(sc PRIVATE
