@@ -28,15 +28,6 @@ if(CMAKE_OSX_ARCHITECTURES)
     set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -arch ${SC_OSX_ARCHITECTURES}")
 endif()
 
-# Windows requires the /safeseh flag to be passed to 32-bit MASM files.
-# Something CMake doesn't do by default. This must be done globally as
-# `/safeseh` is only used for assembly (not C), and there is no support for
-# `$<COMPILE_LANGUAGE:...>` in Visual Studio.
-
-if(MSVC AND CMAKE_CL_64 EQUAL 0)
-    set(CMAKE_ASM_MASM_FLAGS "${CMAKE_ASM_MASM_FLAGS} /safeseh")
-endif()
-
 if(CMAKE_OSX_SYSROOT)
     set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
 endif()
@@ -51,14 +42,16 @@ add_library(sc STATIC
     src/sc.c)
 
 if(MSVC)
+    target_sources(sc PRIVATE
+        src/asm/jump_masm.asm
+        src/asm/make_masm.asm)
+
     if(CMAKE_CL_64 EQUAL 0)
-        target_sources(sc PRIVATE
-            src/asm/jump_i386_ms_pe_masm.asm
-            src/asm/make_i386_ms_pe_masm.asm)
+        set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm PROPERTIES
+            COMPILE_FLAGS "/safeseh /D_WIN32")
     else()
-        target_sources(sc PRIVATE
-            src/asm/jump_x86_64_ms_pe_masm.asm
-            src/asm/make_x86_64_ms_pe_masm.asm)
+        set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm PROPERTIES
+            COMPILE_FLAGS "/D_WIN64")
     endif()
 else()
     target_sources(sc PRIVATE

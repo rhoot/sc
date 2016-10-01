@@ -10,6 +10,7 @@
 ;  - 2016: Reserving space for the parameter area in the unwind area, as well as
 ;          adding a NULL return address for make_fcontext so debuggers will know
 ;          they've reached the top.
+;  - 2016: Removed the END directive; this file is included from a meta file.
 
 ;  ----------------------------------------------------------------------------------
 ;  |    0x0  |    0x4  |    0x8   |    0xc  |   0x10  |   0x14  |   0x18  |   0x1c  |
@@ -138,4 +139,3 @@ finish:
     call  _exit
     hlt
 make_fcontext ENDP
-END

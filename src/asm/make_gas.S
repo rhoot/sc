@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016 Johan Sköld
+ * License: https://opensource.org/licenses/ISC
+ */
+
 #if defined(_WIN32)
 
     #if defined(__i386__)

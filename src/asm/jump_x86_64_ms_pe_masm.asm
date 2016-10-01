@@ -11,6 +11,7 @@
 ;  - 2016: Using a `ret` instead of `jmp` to return to the return address. This
 ;          seems to cause debuggers to better understand the stack, and results
 ;          in proper backtraces.
+;  - 2016: Removed the END directive; this file is included from a meta file.
 
 ;  ----------------------------------------------------------------------------------
 ;  |    0x0  |    0x4  |    0x8   |    0xc  |   0x10  |   0x14  |   0x18  |   0x1c  |
@@ -175,4 +176,3 @@ jump_fcontext PROC FRAME
     ; hop back to the return address
     ret
 jump_fcontext ENDP
-END

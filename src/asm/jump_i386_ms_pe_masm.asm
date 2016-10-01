@@ -4,6 +4,10 @@
 ;     (See accompanying file LICENSE_1_0.txt or copy at
 ;           http://www.boost.org/LICENSE_1_0.txt)
 
+;  Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
+;
+;  - 2016: Removed the END directive; this file is included from a meta file.
+
 ;  ---------------------------------------------------------------------------------
 ;  |    0    |    1    |    2    |    3    |    4    |    5    |    6    |    7    |
 ;  ---------------------------------------------------------------------------------
@@ -101,4 +105,3 @@ jump_fcontext PROC BOOST_CONTEXT_EXPORT
     ; jump to context
     ret
 jump_fcontext ENDP
-END
