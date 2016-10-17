@@ -185,11 +185,7 @@ void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
     assert(context != sc_current_context());
     assert(context != sc_main_context());
 
-    /* This doesn't actually do anything, but it's provided partly to get a
-     * symmetric API, but mainly so we can easily do cleanup if need be in the
-     * future. */
-
-    (void)context;
+    free_fcontext(context->fctx);
 }
 
 void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
