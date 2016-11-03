@@ -8,7 +8,7 @@ Cross platform co-routine library exposed through a minimal C API.
 | Android |  ✓  |       |  ✓  |           |  ✓  |    ✓   |
 | FreeBSD |     |       |     |           |     |    ✓   |
 | iOS     |  ✓  |   ✓   |     |     ✓     |  ✓  |    ✓   |
-| Linux   |  ✓  |       |     |           |  ✓  |    ✓   |
+| Linux   |  ✓  |   ✓   |     |           |  ✓  |    ✓   |
 | OSX     |     |       |     |     ✓     |  ✓  |    ✓   |
 | Windows |     |       |     |           |  ✓  |    ✓   |
 
