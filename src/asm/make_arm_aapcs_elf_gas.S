@@ -12,41 +12,44 @@
  *  -------------------------------------------------  *
  *  | 0x0 | 0x4 | 0x8 | 0xc | 0x10| 0x14| 0x18| 0x1c|  *
  *  -------------------------------------------------  *
- *  | sjlj|hiddn|  v1 |  v2 |  v3 |  v4 |  v5 |  v6 |  *
+ *  |hiddn|  v1 |  v2 |  v3 |  v4 |  v5 |  v6 |  v7 |  *
  *  -------------------------------------------------  *
  *  -------------------------------------------------  *
  *  |  8  |  9  |  10 |  11 |  12 |  13 |  14 |  15 |  *
  *  -------------------------------------------------  *
  *  | 0x20| 0x24| 0x28| 0x2c| 0x30| 0x34| 0x38| 0x3c|  *
  *  -------------------------------------------------  *
- *  |  v7 |  v8 |  lr |  pc | FCTX| DATA|           |  *
+ *  |  v8 |  lr |  pc | FCTX| DATA|                 |  *
  *  -------------------------------------------------  *
  *                                                     *
  *******************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .text
-.globl _sc_make_context
+.globl sc_make_context
 .align 2
-_sc_make_context:
+.type sc_make_context,%function
+sc_make_context:
     @ shift address in A1 to lower 16 byte boundary
     bic  a1, a1, #15
 
     @ reserve space for context-data on context-stack
-    sub  a1, a1, #64
+    sub  a1, a1, #60
 
     @ third arg of sc_make_context() == address of context-function
-    str  a3, [a1, #44]
+    str  a3, [a1, #40]
 
     @ compute address of returned sc_transfer_t
-    add  a2, a1, #48
+    add  a2, a1, #44
     mov  a3, a2
-    str  a3, [a1, #4]
+    str  a3, [a1, #0]
 
     @ compute abs address of label finish
     adr  a2, finish
     @ save address of finish as return-address for context-function
     @ will be entered after context-function returns
-    str  a2, [a1, #40]
+    str  a2, [a1, #36]
 
     bx  lr @ return pointer to context-data
 
@@ -54,4 +57,10 @@ finish:
     @ exit code is zero
     mov  a1, #0
     @ exit application
-    bl  __exit
+    bl  _exit@PLT
+.size sc_make_context,.-sc_make_context
+
+@ Mark that we don't need executable stack.
+.section .note.GNU-stack,"",%progbits
+
+#endif /* SC_META_INCLUDED */

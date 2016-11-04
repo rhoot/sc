@@ -77,6 +77,8 @@
  *                                                                                    *
  * ***********************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .file	"make_x86_64_ms_pe_gas.S"
 .text
 .p2align 4,,15
@@ -148,3 +150,5 @@ finish:
 
 .section .drectve
 .ascii " -export:\"sc_make_context\""
+
+#endif /* SC_META_INCLUDED */

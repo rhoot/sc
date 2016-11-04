@@ -24,16 +24,18 @@
  *                                                                                      *
  ****************************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .text
-.globl sc_make_context
-.type sc_make_context,@function
-.align 16
-sc_make_context:
+.globl _sc_make_context
+.align 8
+_sc_make_context:
     /* first arg of sc_make_context() == top of context-stack */
     movq  %rdi, %rax
 
     /* shift address in RAX to lower 16 byte boundary */
-    andq  $-16, %rax
+    movabs  $-16,           %r8
+    andq    %r8,            %rax
 
     /* reserve space for context-data on context-stack */
     /* on context-function entry: (RSP -0x8) % 16 == 0 */
@@ -54,9 +56,7 @@ finish:
     /* exit code is zero */
     xorq  %rdi, %rdi
     /* exit application */
-    call  _exit@PLT
+    call  __exit
     hlt
-.size sc_make_context,.-sc_make_context
 
-/* Mark that we don't need executable stack. */
-.section .note.GNU-stack,"",%progbits
+#endif /* SC_META_INCLUDED */

@@ -23,6 +23,8 @@
 *  --------------------------------------------------------------------------------- *
 *************************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .file	"make_i386_ms_pe_gas.asm"
 .text
 .p2align 4,,15
@@ -140,3 +142,5 @@ finish:
 
 .section .drectve
 .ascii " -export:\"sc_make_context\""
+
+#endif /* SC_META_INCLUDED */

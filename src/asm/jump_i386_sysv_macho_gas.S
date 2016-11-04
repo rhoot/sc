@@ -24,6 +24,8 @@
  *                                                                                       *
  *****************************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .text
 .globl _sc_jump_context
 .align 2
@@ -56,3 +58,5 @@ _sc_jump_context:
 
     /* jump to context */
     ret
+
+#endif /* SC_META_INCLUDED */

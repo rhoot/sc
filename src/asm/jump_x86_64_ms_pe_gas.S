@@ -74,6 +74,8 @@
  *                                                                                    *
  * ***********************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .file	"jump_x86_64_ms_pe_gas.S"
 .text
 .p2align 4,,15
@@ -188,3 +190,5 @@ sc_jump_context:
 
 .section .drectve
 .ascii " -export:\"sc_jump_context\""
+
+#endif /* SC_META_INCLUDED */

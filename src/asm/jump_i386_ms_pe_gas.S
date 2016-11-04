@@ -23,6 +23,8 @@
 *  --------------------------------------------------------------------------------- *
 *************************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .file	"jump_i386_ms_pe_gas.asm"
 .text
 .p2align 4,,15
@@ -103,3 +105,5 @@ _sc_jump_context:
 
 .section .drectve
 .ascii " -export:\"sc_jump_context\""
+
+#endif /* SC_META_INCLUDED */

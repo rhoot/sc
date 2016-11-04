@@ -24,10 +24,13 @@
  *                                                                                      *
  ****************************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .text
-.globl _sc_jump_context
-.align 8
-_sc_jump_context:
+.globl sc_jump_context
+.type sc_jump_context,@function
+.align 16
+sc_jump_context:
     pushq  %rbp  /* save RBP */
     pushq  %rbx  /* save RBX */
     pushq  %r15  /* save R15 */
@@ -60,3 +63,9 @@ _sc_jump_context:
 
     /* indirect jump to context */
     jmp  *%r8
+.size sc_jump_context,.-sc_jump_context
+
+/* Mark that we don't need executable stack.  */
+.section .note.GNU-stack,"",%progbits
+
+#endif /* SC_META_INCLUDED */

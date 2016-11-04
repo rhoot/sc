@@ -24,35 +24,43 @@
  *                                                                                      *
  ****************************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .text
-.globl _sc_make_context
+.globl _sc_jump_context
 .align 8
-_sc_make_context:
-    /* first arg of sc_make_context() == top of context-stack */
-    movq  %rdi, %rax
+_sc_jump_context:
+    pushq  %rbp  /* save RBP */
+    pushq  %rbx  /* save RBX */
+    pushq  %r15  /* save R15 */
+    pushq  %r14  /* save R14 */
+    pushq  %r13  /* save R13 */
+    pushq  %r12  /* save R12 */
 
-    /* shift address in RAX to lower 16 byte boundary */
-    movabs  $-16,           %r8
-    andq    %r8,            %rax
+    /* store RSP (pointing to context-data) in RAX */
+    movq  %rsp, %rax
 
-    /* reserve space for context-data on context-stack */
-    /* on context-function entry: (RSP -0x8) % 16 == 0 */
-    leaq  -0x40(%rax), %rax
+    /* restore RSP (pointing to context-data) from RDI */
+    movq  %rdi, %rsp
 
-    /* third arg of sc_make_context() == address of context-function */
-    movq  %rdx, 0x30(%rax)
+    popq  %r12  /* restrore R12 */
+    popq  %r13  /* restrore R13 */
+    popq  %r14  /* restrore R14 */
+    popq  %r15  /* restrore R15 */
+    popq  %rbx  /* restrore RBX */
+    popq  %rbp  /* restrore RBP */
 
-    /* compute abs address of label finish */
-    leaq  finish(%rip), %rcx
-    /* save address of finish as return-address for context-function */
-    /* will be entered after context-function returns */
-    movq  %rcx, 0x38(%rax)
+    /* restore return-address */
+    popq  %r8
 
-    ret /* return pointer to context-data */
+    /* return sc_transfer_t from jump */
+    /* RAX == fctx, RDX == data */
+    movq  %rsi, %rdx
+    /* pass sc_transfer_t as first arg in context function */
+    /* RDI == fctx, RSI == data */
+    movq  %rax, %rdi
 
-finish:
-    /* exit code is zero */
-    xorq  %rdi, %rdi
-    /* exit application */
-    call  __exit
-    hlt
+    /* indirect jump to context */
+    jmp  *%r8
+
+#endif /* SC_META_INCLUDED */

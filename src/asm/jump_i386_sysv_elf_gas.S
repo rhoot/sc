@@ -17,6 +17,8 @@
  *                                                                                       *
  *****************************************************************************************/
 
+#ifdef SC_META_INCLUDED
+
 .text
 .globl sc_jump_context
 .align 2
@@ -57,3 +59,5 @@ sc_jump_context:
 
 /* Mark that we don't need executable stack.  */
 .section .note.GNU-stack,"",%progbits
+
+#endif /* SC_META_INCLUDED */
