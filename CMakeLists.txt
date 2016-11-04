@@ -59,10 +59,6 @@ else()
         src/asm/make_gas.S)
 endif()
 
-target_compile_definitions(sc
-    PRIVATE
-        BOOST_CONTEXT_EXPORT=)
-
 target_compile_options(sc
     PRIVATE
         $<$<C_COMPILER_ID:GNU>:-Wall -Werror>
