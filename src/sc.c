@@ -8,7 +8,7 @@
 #include <assert.h>     /* assert */
 #include <stdint.h>     /* uintptr_t */
 
-#include "fcontext.h"
+#include "context.h"
 
 /*
  * Compatibility
@@ -35,7 +35,7 @@
  */
 
 typedef struct sc_context {
-    fcontext_t fctx;
+    sc_context_sp_t ctx;
     sc_context_proc_t proc;
     sc_context_t parent;
 } context_data;
@@ -116,15 +116,15 @@ static uintptr_t align_down (uintptr_t addr, uintptr_t alignment) {
     return addr & ~(alignment - 1);
 }
 
-static void context_proc (transfer_t transfer) {
+static void context_proc (sc_transfer_t transfer) {
     context_data* data = (context_data*)transfer.data;
     assert(data != NULL);
 
     /* Jump back to parent */
-    transfer = jump_fcontext(transfer.fctx, NULL);
+    transfer = sc_jump_context(transfer.ctx, NULL);
 
     /* Update the current context */
-    sc_current_context()->fctx = transfer.fctx;
+    sc_current_context()->ctx = transfer.ctx;
     set_current(data);
 
     /* Execute the context proc */
@@ -143,7 +143,7 @@ sc_context_t SC_CALL_DECL sc_context_create (
     uintptr_t stack_addr;
     uintptr_t sp_addr;
     uintptr_t data_addr;
-    fcontext_t fctx;
+    sc_context_sp_t ctx;
     context_data* data;
 
     assert(stack_ptr != NULL);
@@ -168,8 +168,8 @@ sc_context_t SC_CALL_DECL sc_context_create (
     stack_size = sp_addr - stack_addr;
 
     /* Create the context */
-    fctx = make_fcontext((void*)sp_addr, stack_size, context_proc);
-    assert(fctx != NULL);
+    ctx = sc_make_context((void*)sp_addr, stack_size, context_proc);
+    assert(ctx != NULL);
 
     /* Create the context data at the reserved address */
     data = (context_data*)data_addr;
@@ -177,7 +177,7 @@ sc_context_t SC_CALL_DECL sc_context_create (
     data->parent = sc_current_context();
 
     /* Transfer the proc pointer to the context by briefly switching to it */
-    data->fctx = jump_fcontext(fctx, data).fctx;
+    data->ctx = sc_jump_context(ctx, data).ctx;
     return data;
 }
 
@@ -185,18 +185,18 @@ void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
     assert(context != sc_current_context());
     assert(context != sc_main_context());
 
-    free_fcontext(context->fctx);
+    sc_free_context(context->ctx);
 }
 
 void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
     context_data* this_ctx = sc_current_context();
-    transfer_t transfer;
+    sc_transfer_t transfer;
 
     assert(target != NULL);
 
     if (target != this_ctx) {
-        transfer = jump_fcontext(target->fctx, value);
-        sc_current_context()->fctx = transfer.fctx;
+        transfer = sc_jump_context(target->ctx, value);
+        sc_current_context()->ctx = transfer.ctx;
         set_current(this_ctx);
         value = transfer.data;
     }

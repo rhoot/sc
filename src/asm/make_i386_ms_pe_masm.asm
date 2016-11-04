@@ -30,8 +30,8 @@
 _exit PROTO, value:SDWORD
 .code
 
-make_fcontext PROC
-    ; first arg of make_fcontext() == top of context-stack
+sc_make_context PROC
+    ; first arg of sc_make_context() == top of context-stack
     mov  eax, [esp+04h]
 
     ; reserve space for first argument of context-function
@@ -46,11 +46,11 @@ make_fcontext PROC
     ; additional space is required for SEH
     lea  eax, [eax-048h]
 
-    ; first arg of make_fcontext() == top of context-stack
+    ; first arg of sc_make_context() == top of context-stack
     mov  ecx, [esp+04h]
     ; save top address of context stack as 'base'
     mov  [eax+0ch], ecx
-    ; second arg of make_fcontext() == size of context-stack
+    ; second arg of sc_make_context() == size of context-stack
     mov  edx, [esp+08h]
     ; negate stack size for LEA instruction (== substraction)
     neg  edx
@@ -64,7 +64,7 @@ make_fcontext PROC
 	xor  ecx, ecx
     mov  [eax], ecx
 
-    ; third arg of make_fcontext() == address of context-function
+    ; third arg of sc_make_context() == address of context-function
     ; stored in EBX
     mov  ecx, [esp+0ch]
     mov  [eax+01ch], ecx
@@ -72,7 +72,7 @@ make_fcontext PROC
     ; compute abs address of label trampoline
     mov  ecx, trampoline
     ; save address of trampoline as return-address for context-function
-    ; will be entered after calling jump_fcontext() first time
+    ; will be entered after calling sc_jump_context() first time
     mov  [eax+024h], ecx
 
     ; compute abs address of label finish
@@ -135,4 +135,4 @@ finish:
     ; exit application
     call  _exit
     hlt
-make_fcontext ENDP
+sc_make_context ENDP

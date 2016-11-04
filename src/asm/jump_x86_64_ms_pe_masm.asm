@@ -71,7 +71,7 @@
 
 .code
 
-jump_fcontext PROC FRAME
+sc_jump_context PROC FRAME
     .endprolog
 
     push  rcx  ; save hidden address of transport_t
@@ -165,7 +165,7 @@ jump_fcontext PROC FRAME
     pop  rax  ; restore hidden address of transport_t
 
     ; transport_t returned in RAX
-    ; return parent fcontext_t
+    ; return parent sc_context_sp_t
     mov  [rax], r9
     ; return data
     mov  [rax+08h], r8
@@ -175,4 +175,4 @@ jump_fcontext PROC FRAME
 
     ; hop back to the return address
     ret
-jump_fcontext ENDP
+sc_jump_context ENDP

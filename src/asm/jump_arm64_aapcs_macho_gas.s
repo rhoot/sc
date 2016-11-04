@@ -32,9 +32,9 @@
  *******************************************************/
 
 .text
-.globl _jump_fcontext
+.globl _sc_jump_context
 .balign 16
-_jump_fcontext:
+_sc_jump_context:
     ; prepare stack for GP + FPU
     sub  sp, sp, #0x70
 
@@ -63,8 +63,8 @@ _jump_fcontext:
     ldp  x27, x28, [sp, #0x40]
     ldp  fp,  lr,  [sp, #0x50]
 
-    ; return transfer_t from jump
-    ; pass transfer_t as first arg in context function
+    ; return sc_transfer_t from jump
+    ; pass sc_transfer_t as first arg in context function
     ; X0 == FCTX, X1 == DATA
     mov x0, x4
 

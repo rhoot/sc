@@ -25,9 +25,9 @@
  *******************************************************/
 
 .text
-.globl _jump_fcontext
+.globl _sc_jump_context
 .align 2
-_jump_fcontext:
+_sc_jump_context:
     @ save LR as PC
     push {lr}
     @ save hidden,V1-V8,LR
@@ -56,10 +56,10 @@ _jump_fcontext:
     @ restore hidden,V1-V8,LR
     pop {a4,v1-v8,lr}
 
-    @ return transfer_t from jump
+    @ return sc_transfer_t from jump
     str  a1, [a4, #0]
     str  a3, [a4, #4]
-    @ pass transfer_t as first arg in context function
+    @ pass sc_transfer_t as first arg in context function
     @ A1 == FCTX, A2 == DATA
     mov  a2, a3
 

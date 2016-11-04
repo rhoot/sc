@@ -25,9 +25,9 @@
  ****************************************************************************************/
 
 .text
-.globl _jump_fcontext
+.globl _sc_jump_context
 .align 8
-_jump_fcontext:
+_sc_jump_context:
     pushq  %rbp  /* save RBP */
     pushq  %rbx  /* save RBX */
     pushq  %r15  /* save R15 */
@@ -51,10 +51,10 @@ _jump_fcontext:
     /* restore return-address */
     popq  %r8
 
-    /* return transfer_t from jump */
+    /* return sc_transfer_t from jump */
     /* RAX == fctx, RDX == data */
     movq  %rsi, %rdx
-    /* pass transfer_t as first arg in context function */
+    /* pass sc_transfer_t as first arg in context function */
     /* RDI == fctx, RSI == data */
     movq  %rax, %rdi
 

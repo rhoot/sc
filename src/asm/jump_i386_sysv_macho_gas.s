@@ -25,25 +25,25 @@
  *****************************************************************************************/
 
 .text
-.globl _jump_fcontext
+.globl _sc_jump_context
 .align 2
-_jump_fcontext:
+_sc_jump_context:
     pushl  %ebp  /* save EBP */
     pushl  %ebx  /* save EBX */
     pushl  %esi  /* save ESI */
     pushl  %edi  /* save EDI */
 
     /* The IA-32 ABI causes 8 byte structs to be returned split between EAX
-       and EDX. For us, this means the parent fcontext_t should be in EAX and
-       the data in EDX. */
+       and EDX. For us, this means the parent sc_context_sp_t should be in EAX
+       and the data in EDX. */
 
-    /* store current fcontext_t in EAX */
+    /* store current sc_context_sp_t in EAX */
     movl  %esp, %eax
 
-    /* first arg of jump_fcontext() == context jumping to */
+    /* first arg of sc_jump_context() == context jumping to */
     movl  0x14(%esp), %ecx
 
-    /* second arg of jump_fcontext() == data to be transferred */
+    /* second arg of sc_jump_context() == data to be transferred */
     movl  0x18(%esp), %edx
 
     /* restore ESP (pointing to context-data) from ECX */

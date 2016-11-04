@@ -26,9 +26,9 @@
 .file	"jump_i386_ms_pe_gas.asm"
 .text
 .p2align 4,,15
-.globl	_jump_fcontext
-.def	_jump_fcontext;	.scl	2;	.type	32;	.endef
-_jump_fcontext:
+.globl	_sc_jump_context
+.def	_sc_jump_context;	.scl	2;	.type	32;	.endef
+_sc_jump_context:
     pushl  %ebp  /* save EBP */
     pushl  %ebx  /* save EBX */
     pushl  %esi  /* save ESI */
@@ -48,11 +48,11 @@ _jump_fcontext:
     /* load current stack limit */
     movl  0x08(%edx), %eax
     push  %eax
-    
+
     /* load current dealloction stack */
     movl  0xe0c(%edx), %eax
     push  %eax
-    
+
     /* load fiber local storage */
     movl  0x10(%edx), %eax
     push  %eax
@@ -60,7 +60,7 @@ _jump_fcontext:
     /* store ESP (pointing to context-data) in EAX */
     movl  %esp, %eax
 
-    /* first arg of jump_fcontext() == fcontext to jump to */
+    /* first arg of sc_jump_context() == fcontext to jump to */
     movl  0x28(%esp), %ecx
 
     /* restore ESP (pointing to context-data) from EDX */
@@ -94,7 +94,7 @@ _jump_fcontext:
     popl  %ebx  /* save EBX */
     popl  %ebp  /* save EBP */
 
-    /* return transfer_t */
+    /* return sc_transfer_t */
     /* FCTX == EAX, DATA == EDX */
     movl  0x2c(%eax), %edx
 
@@ -102,4 +102,4 @@ _jump_fcontext:
     ret
 
 .section .drectve
-.ascii " -export:\"jump_fcontext\""
+.ascii " -export:\"sc_jump_context\""

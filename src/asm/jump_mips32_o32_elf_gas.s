@@ -9,7 +9,7 @@
    Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
 
    - 2016: Fixed a bug with wrong argument being passed as data in returned
-           transfer_ts.
+           sc_transfer_ts.
 */
 
 /*******************************************************
@@ -32,11 +32,11 @@
  * *****************************************************/
 
 .text
-.globl jump_fcontext
+.globl sc_jump_context
 .align 2
-.type jump_fcontext,@function
-.ent jump_fcontext
-jump_fcontext:
+.type sc_jump_context,@function
+.ent sc_jump_context
+sc_jump_context:
     # reserve space on stack
     addiu $sp, $sp, -112
 
@@ -49,7 +49,7 @@ jump_fcontext:
     sw  $s6, 24($sp)  # save S6
     sw  $s7, 28($sp)  # save S7
     sw  $fp, 32($sp)  # save FP
-    sw  $a0, 36($sp)  # save hidden, address of returned transfer_t
+    sw  $a0, 36($sp)  # save hidden, address of returned sc_transfer_t
     sw  $ra, 40($sp)  # save RA
     sw  $ra, 44($sp)  # save RA as PC
 
@@ -68,7 +68,7 @@ jump_fcontext:
     lw  $s6, 24($sp)  # restore S6
     lw  $s7, 28($sp)  # restore S7
     lw  $fp, 32($sp)  # restore FP
-    lw  $t0, 36($sp)  # restore hidden, address of returned transfer_t
+    lw  $t0, 36($sp)  # restore hidden, address of returned sc_transfer_t
     lw  $ra, 40($sp)  # restore RA
 
     # load PC
@@ -77,18 +77,18 @@ jump_fcontext:
     # adjust stack
     addiu $sp, $sp, 112
 
-    # return transfer_t from jump
-    sw  $a0, ($t0)  # fctx of transfer_t
-    sw  $a2, 4($t0) # data of transfer_t
+    # return sc_transfer_t from jump
+    sw  $a0, ($t0)  # fctx of sc_transfer_t
+    sw  $a2, 4($t0) # data of sc_transfer_t
 
-    # pass transfer_t as first arg in context function
+    # pass sc_transfer_t as first arg in context function
     # A0 == fctx, A1 == data
     move  $a1, $a2
 
     # jump to context
     jr  $t9
-.end jump_fcontext
-.size jump_fcontext, .-jump_fcontext
+.end sc_jump_context
+.size sc_jump_context, .-sc_jump_context
 
 /* Mark that we don't need executable stack.  */
 .section .note.GNU-stack,"",%progbits

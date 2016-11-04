@@ -25,20 +25,20 @@
  *******************************************************/
 
 .text
-.globl make_fcontext
+.globl sc_make_context
 .align 2
-.type make_fcontext,%function
-make_fcontext:
+.type sc_make_context,%function
+sc_make_context:
     @ shift address in A1 to lower 16 byte boundary
     bic  a1, a1, #15
 
     @ reserve space for context-data on context-stack
     sub  a1, a1, #60
 
-    @ third arg of make_fcontext() == address of context-function
+    @ third arg of sc_make_context() == address of context-function
     str  a3, [a1, #40]
 
-    @ compute address of returned transfer_t
+    @ compute address of returned sc_transfer_t
     add  a2, a1, #44
     mov  a3, a2
     str  a3, [a1, #0]
@@ -56,7 +56,7 @@ finish:
     mov  a1, #0
     @ exit application
     bl  _exit@PLT
-.size make_fcontext,.-make_fcontext
+.size sc_make_context,.-sc_make_context
 
 @ Mark that we don't need executable stack.
 .section .note.GNU-stack,"",%progbits

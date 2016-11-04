@@ -18,22 +18,22 @@
  *****************************************************************************************/
 
 .text
-.globl jump_fcontext
+.globl sc_jump_context
 .align 2
-.type jump_fcontext,@function
-jump_fcontext:
+.type sc_jump_context,@function
+sc_jump_context:
     pushl  %ebp  /* save EBP */
     pushl  %ebx  /* save EBX */
     pushl  %esi  /* save ESI */
     pushl  %edi  /* save EDI */
 
-    /* store fcontext_t in ECX */
+    /* store sc_context_sp_t in ECX */
     movl  %esp, %ecx
 
-    /* first arg of jump_fcontext() == fcontext to jump to */
+    /* first arg of sc_jump_context() == fcontext to jump to */
     movl  0x18(%esp), %eax
 
-    /* second arg of jump_fcontext() == data to be transferred */
+    /* second arg of sc_jump_context() == data to be transferred */
     movl  0x1c(%esp), %edx
 
     /* restore ESP (pointing to context-data) from EAX */
@@ -41,7 +41,7 @@ jump_fcontext:
 
     /* address of returned transport_t */
     movl 0x14(%esp), %eax
-    /* return parent fcontext_t */
+    /* return parent sc_context_sp_t */
     movl  %ecx, (%eax)
     /* return data */
     movl %edx, 0x4(%eax)
@@ -53,7 +53,7 @@ jump_fcontext:
 
     /* jump to context */
     ret $4
-.size jump_fcontext,.-jump_fcontext
+.size sc_jump_context,.-sc_jump_context
 
 /* Mark that we don't need executable stack.  */
 .section .note.GNU-stack,"",%progbits

@@ -25,10 +25,10 @@
  *****************************************************************************************/
 
 .text
-.globl _make_fcontext
+.globl _sc_make_context
 .align 2
-_make_fcontext:
-    /* first arg of make_fcontext() == top of context-stack */
+_sc_make_context:
+    /* first arg of sc_make_context() == top of context-stack */
     movl  0x4(%esp), %eax
 
     /* shift address in EAX to lower 16 byte boundary */
@@ -37,7 +37,7 @@ _make_fcontext:
     /* reserve space for context-data on context-stack */
     leal  -0x28(%eax), %eax
 
-    /* thrid arg of make_fcontext() == address of context-function */
+    /* thrid arg of sc_make_context() == address of context-function */
     /* stored in EBX */
     movl  0xc(%esp), %edx
     movl  %edx, 0x8(%eax)
@@ -49,7 +49,7 @@ _make_fcontext:
     /* compute abs address of label trampoline */
     addl  $trampoline-1b, %ecx
     /* save address of trampoline as return address */
-    /* will be entered after calling jump_fcontext() first time */
+    /* will be entered after calling sc_jump_context() first time */
     movl  %ecx, 0x10(%eax)
 
     /* compute abs address of label finish */
@@ -65,7 +65,7 @@ _make_fcontext:
     ret /* return pointer to context-data */
 
 trampoline:
-    /* move transport_t from the return value from jump_fcontext, to be passed
+    /* move transport_t from the return value from sc_jump_context, to be passed
        as parameter when entering the context-function */
     movl  %eax, (%esp)
     movl  %edx, 0x4(%esp)

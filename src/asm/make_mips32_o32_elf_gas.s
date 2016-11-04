@@ -25,17 +25,17 @@
  * *****************************************************/
 
 .text
-.globl make_fcontext
+.globl sc_make_context
 .align 2
-.type make_fcontext,@function
-.ent make_fcontext
-make_fcontext:
+.type sc_make_context,@function
+.ent sc_make_context
+sc_make_context:
 #ifdef __PIC__
 .set    noreorder
 .cpload $t9
 .set    reorder
 #endif
-    # first arg of make_fcontext() == top address of context-stack
+    # first arg of sc_make_context() == top address of context-stack
     move $v0, $a0
 
     # shift address in A0 to lower 16 byte boundary
@@ -47,12 +47,12 @@ make_fcontext:
     # including 48 byte of shadow space (sp % 16 == 0)
     addiu $v0, $v0, -112
 
-    # third arg of make_fcontext() == address of context-function
+    # third arg of sc_make_context() == address of context-function
     sw  $a2, 44($v0)
     # save global pointer in context-data
     sw  $gp, 48($v0)
 
-    # compute address of returned transfer_t
+    # compute address of returned sc_transfer_t
     addiu $t0, $v0, 52
     sw  $t0, 36($v0)
 
@@ -79,8 +79,8 @@ finish:
     lw  $t9, %call16(_exit)($gp)
     # exit application
     jalr  $t9
-.end make_fcontext
-.size make_fcontext, .-make_fcontext
+.end sc_make_context
+.size sc_make_context, .-sc_make_context
 
 /* Mark that we don't need executable stack.  */
 .section .note.GNU-stack,"",%progbits

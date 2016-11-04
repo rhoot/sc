@@ -38,7 +38,7 @@ endif()
 
 add_library(sc STATIC
     include/sc.h
-    src/fcontext.h
+    src/context.h
     src/sc.c)
 
 if(MSVC)

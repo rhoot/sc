@@ -28,7 +28,7 @@
 .model flat, c
 .code
 
-jump_fcontext PROC
+sc_jump_context PROC
     push  ebp  ; save EBP
     push  ebx  ; save EBX
     push  esi  ; save ESI
@@ -62,7 +62,7 @@ jump_fcontext PROC
     ; store ESP (pointing to context-data) in EAX
     mov  eax, esp
 
-    ; firstarg of jump_fcontext() == fcontext to jump to
+    ; firstarg of sc_jump_context() == fcontext to jump to
     mov  ecx, [esp+028h]
 
     ; restore ESP (pointing to context-data) from EAX
@@ -98,10 +98,10 @@ jump_fcontext PROC
     pop  ebx  ; save EBX
     pop  ebp  ; save EBP
 
-    ; return transfer_t
+    ; return sc_transfer_t
     ; FCTX == EAX, DATA == EDX
     mov  edx, [eax+02ch]
 
     ; jump to context
     ret
-jump_fcontext ENDP
+sc_jump_context ENDP

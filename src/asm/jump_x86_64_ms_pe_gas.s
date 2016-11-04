@@ -77,10 +77,10 @@
 .file	"jump_x86_64_ms_pe_gas.S"
 .text
 .p2align 4,,15
-.globl	jump_fcontext
-.def	jump_fcontext;	.scl	2;	.type	32;	.endef
-.seh_proc	jump_fcontext
-jump_fcontext:
+.globl	sc_jump_context
+.def	sc_jump_context;	.scl	2;	.type	32;	.endef
+.seh_proc	sc_jump_context
+sc_jump_context:
 .seh_endprologue
 
     pushq  %rcx  /* save hidden address of transport_t */
@@ -174,7 +174,7 @@ jump_fcontext:
     popq  %rax  /* restore hidden address of transport_t */
 
     /* transport_t returned in RAX */
-    /* return parent fcontext_t */
+    /* return parent sc_context_sp_t */
     movq  %r9, (%rax)
     /* return data */
     movq  %r8, 0x8(%rax)
@@ -187,4 +187,4 @@ jump_fcontext:
 .seh_endproc
 
 .section .drectve
-.ascii " -export:\"jump_fcontext\""
+.ascii " -export:\"sc_jump_context\""

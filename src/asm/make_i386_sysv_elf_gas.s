@@ -18,11 +18,11 @@
  *****************************************************************************************/
 
 .text
-.globl make_fcontext
+.globl sc_make_context
 .align 2
-.type make_fcontext,@function
-make_fcontext:
-    /* first arg of make_fcontext() == top of context-stack */
+.type sc_make_context,@function
+sc_make_context:
+    /* first arg of sc_make_context() == top of context-stack */
     movl  0x4(%esp), %eax
 
     /* reserve space for first argument of context-function
@@ -35,7 +35,7 @@ make_fcontext:
     /* reserve space for context-data on context-stack */
     leal  -0x28(%eax), %eax
 
-    /* third arg of make_fcontext() == address of context-function */
+    /* third arg of sc_make_context() == address of context-function */
     /* stored in EBX */
     movl  0xc(%esp), %ecx
     movl  %ecx, 0x8(%eax)
@@ -52,7 +52,7 @@ make_fcontext:
     /* compute abs address of label trampoline */
     addl  $trampoline-1b, %ecx
     /* save address of trampoline as return address */
-    /* will be entered after calling jump_fcontext() first time */
+    /* will be entered after calling sc_jump_context() first time */
     movl  %ecx, 0x10(%eax)
 
     /* compute abs address of label finish */
@@ -63,7 +63,7 @@ make_fcontext:
     addl  $finish-2b, %ecx
     /* save address of finish as return-address for context-function */
     /* will be entered after context-function returns */
-    movl  %ecx, 0xc(%eax) 
+    movl  %ecx, 0xc(%eax)
 
     ret /* return pointer to context-data */
 
@@ -88,7 +88,7 @@ finish:
     /* exit application */
     call  _exit@PLT
     hlt
-.size make_fcontext,.-make_fcontext
+.size sc_make_context,.-sc_make_context
 
 /* Mark that we don't need executable stack.  */
 .section .note.GNU-stack,"",%progbits

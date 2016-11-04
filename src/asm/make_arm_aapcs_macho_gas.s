@@ -25,19 +25,19 @@
  *******************************************************/
 
 .text
-.globl _make_fcontext
+.globl _sc_make_context
 .align 2
-_make_fcontext:
+_sc_make_context:
     @ shift address in A1 to lower 16 byte boundary
     bic  a1, a1, #15
 
     @ reserve space for context-data on context-stack
     sub  a1, a1, #64
 
-    @ third arg of make_fcontext() == address of context-function
+    @ third arg of sc_make_context() == address of context-function
     str  a3, [a1, #44]
 
-    @ compute address of returned transfer_t
+    @ compute address of returned sc_transfer_t
     add  a2, a1, #48
     mov  a3, a2
     str  a3, [a1, #4]

@@ -7,9 +7,9 @@
 ;  Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
 ;
 ;  - 2016: XMM6-XMM15 must be preserved by the callee in Windows x64.
-;  - 2016: Reserving space for the parameter area in the unwind area, as well as
-;          adding a NULL return address for make_fcontext so debuggers will know
-;          they've reached the top.
+;  - 2016: Reserving space for the parameter area in the unwind area, as well
+;          as adding a NULL return address for sc_make_context so debuggers
+;          will know they've reached the top.
 ;  - 2016: Removed the END directive; this file is included from a meta file.
 
 ;  ----------------------------------------------------------------------------------
@@ -73,21 +73,21 @@ EXTERN  _exit:PROC
 .code
 
 ; generate function table entry in .pdata and unwind information in
-make_fcontext PROC FRAME
+sc_make_context PROC FRAME
     ; Tell the assembler we're allocating 32 bytes on the stack, to fit the
     ; parameter area. This allows the debugger to see the NULL field just
-    ; above it as the return address from make_fcontext, causing it to realize
+    ; above it as the return address from sc_make_context, causing it to realize
     ; it's reached the top of the callstack.
     .allocstack 020h
 
     ; .xdata for a function's structured exception handling unwind behavior
     .endprolog
 
-    ; first arg of make_fcontext() == top of context-stack
+    ; first arg of sc_make_context() == top of context-stack
     mov  rax, rcx
 
     ; shift address in RAX to lower 16 byte boundary
-    ; == pointer to fcontext_t and address of context stack
+    ; == pointer to sc_context_sp_t and address of context stack
     and  rax, -16
 
     ; reserve space for context-data on context-stack
@@ -97,13 +97,13 @@ make_fcontext PROC FRAME
     ; 160 bytes xmm storage, 8+8 bytes alignment, 176 bytes stack data
     sub  rax, 0160h
 
-    ; third arg of make_fcontext() == address of context-function
+    ; third arg of sc_make_context() == address of context-function
     mov  [rax+0110h], r8
 
-    ; first arg of make_fcontext() == top of context-stack
+    ; first arg of sc_make_context() == top of context-stack
     ; save top address of context stack as 'base'
     mov  [rax+0c0h], rcx
-    ; second arg of make_fcontext() == size of context-stack
+    ; second arg of sc_make_context() == size of context-stack
     ; negate stack size for LEA instruction (== substraction)
     neg  rdx
     ; compute bottom address of context stack (limit)
@@ -116,7 +116,7 @@ make_fcontext PROC FRAME
     xor  rcx, rcx
     mov  [rax+0a8h], rcx
 
-    ; zero out make_fcontext's return address (rcx is still zero)
+    ; zero out sc_make_context's return address (rcx is still zero)
     mov  [rax+0140h], rcx
 
     ; compute address of transport_t
@@ -138,4 +138,4 @@ finish:
     ; exit application
     call  _exit
     hlt
-make_fcontext ENDP
+sc_make_context ENDP

@@ -25,10 +25,10 @@
  ****************************************************************************************/
 
 .text
-.globl jump_fcontext
-.type jump_fcontext,@function
+.globl sc_jump_context
+.type sc_jump_context,@function
 .align 16
-jump_fcontext:
+sc_jump_context:
     pushq  %rbp  /* save RBP */
     pushq  %rbx  /* save RBX */
     pushq  %r15  /* save R15 */
@@ -52,16 +52,16 @@ jump_fcontext:
     /* restore return-address */
     popq  %r8
 
-    /* return transfer_t from jump */
+    /* return sc_transfer_t from jump */
     /* RAX == fctx, RDX == data */
     movq  %rsi, %rdx
-    /* pass transfer_t as first arg in context function */
+    /* pass sc_transfer_t as first arg in context function */
     /* RDI == fctx, RSI == data */
     movq  %rax, %rdi
 
     /* indirect jump to context */
     jmp  *%r8
-.size jump_fcontext,.-jump_fcontext
+.size sc_jump_context,.-sc_jump_context
 
 /* Mark that we don't need executable stack.  */
 .section .note.GNU-stack,"",%progbits

@@ -26,10 +26,10 @@
 .file	"make_i386_ms_pe_gas.asm"
 .text
 .p2align 4,,15
-.globl	_make_fcontext
-.def	_make_fcontext;	.scl	2;	.type	32;	.endef
-_make_fcontext:
-    /* first arg of make_fcontext() == top of context-stack */
+.globl	_sc_make_context
+.def	_sc_make_context;	.scl	2;	.type	32;	.endef
+_sc_make_context:
+    /* first arg of sc_make_context() == top of context-stack */
     movl  0x04(%esp), %eax
 
     /* reserve space for first argument of context-function */
@@ -45,11 +45,11 @@ _make_fcontext:
     /* additional space is required for SEH */
     leal  -0x48(%eax), %eax
 
-    /* first arg of make_fcontext() == top of context-stack */
+    /* first arg of sc_make_context() == top of context-stack */
     movl  0x04(%esp), %ecx
     /* save top address of context stack as 'base' */
     movl  %ecx, 0xc(%eax)
-    /* second arg of make_fcontext() == size of context-stack */
+    /* second arg of sc_make_context() == size of context-stack */
     movl  0x08(%esp), %edx
     /* negate stack size for LEA instruction (== substraction) */
     negl  %edx
@@ -63,7 +63,7 @@ _make_fcontext:
 	xorl  %ecx, %ecx
     movl  %ecx, (%eax)
 
-    /* third arg of make_fcontext() == address of context-function */
+    /* third arg of sc_make_context() == address of context-function */
     /* stored in EBX */
     movl  0xc(%esp), %ecx
     movl  %ecx, 0x1c(%eax)
@@ -71,7 +71,7 @@ _make_fcontext:
     /* compute abs address of label trampoline */
     movl  $trampoline, %ecx
     /* save address of trampoline as return-address for context-function */
-    /* will be entered after calling jump_fcontext() first time */
+    /* will be entered after calling sc_jump_context() first time */
     movl  %ecx, 0x24(%eax)
 
     /* compute abs address of label finish */
@@ -139,4 +139,4 @@ finish:
 .def	__exit;	.scl	2;	.type	32;	.endef  /* standard C library function */
 
 .section .drectve
-.ascii " -export:\"make_fcontext\""
+.ascii " -export:\"sc_make_context\""

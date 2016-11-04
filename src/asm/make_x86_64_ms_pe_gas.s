@@ -10,12 +10,12 @@
    Updated by Johan Sköld for sc (https://github.com/rhoot/sc)
 
    - 2016: XMM6-XMM15 must be preserved by the callee in Windows x64.
-   - 2016: Reserving space for the parameter area in the unwind area, as well as
-           adding a NULL return address for make_fcontext so debuggers can reasonably
-           know they've reached the top. There unfortunately doesn't seem to be a way
-           to tell gdb that it reached the top (it just uses symbol files), but at
-           least an address of 0x0000000000000000 is quite a bit more obvious than a
-           random address.
+   - 2016: Reserving space for the parameter area in the unwind area, as well
+           as adding a NULL return address for sc_make_context so debuggers can
+           reasonably know they've reached the top. There unfortunately doesn't
+           seem to be a way to tell gdb that it reached the top (it just uses
+           symbol files), but at least an address of 0x0000000000000000 is
+           quite a bit more obvious than a random address.
 */
 
 /**************************************************************************************
@@ -80,18 +80,18 @@
 .file	"make_x86_64_ms_pe_gas.S"
 .text
 .p2align 4,,15
-.globl	make_fcontext
-.def	make_fcontext;	.scl	2;	.type	32;	.endef
-.seh_proc	make_fcontext
-make_fcontext:
+.globl	sc_make_context
+.def	sc_make_context;	.scl	2;	.type	32;	.endef
+.seh_proc	sc_make_context
+sc_make_context:
 .seh_stackalloc 0x20
 .seh_endprologue
 
-    /* first arg of make_fcontext() == top of context-stack */
+    /* first arg of sc_make_context() == top of context-stack */
     movq  %rcx, %rax
 
     /* shift address in RAX to lower 16 byte boundary */
-    /* == pointer to fcontext_t and address of context stack */
+    /* == pointer to sc_context_sp_t and address of context stack */
     andq  $-16, %rax
 
     /* reserve space for context-data on context-stack */
@@ -101,13 +101,13 @@ make_fcontext:
     /* 160 bytes xmm storage, 8+8 bytes alignment, 176 bytes stack data */
     subq  $0x160, %rax
 
-    /* third arg of make_fcontext() == address of context-function */
+    /* third arg of sc_make_context() == address of context-function */
     movq  %r8, 0x110(%rax)
 
-    /* first arg of make_fcontext() == top of context-stack */
+    /* first arg of sc_make_context() == top of context-stack */
     /* save top address of context stack as 'base' */
     movq  %rcx, 0xc0(%rax)
-    /* second arg of make_fcontext() == size of context-stack */
+    /* second arg of sc_make_context() == size of context-stack */
     /* negate stack size for LEA instruction (== substraction) */
     negq  %rdx
     /* compute bottom address of context stack (limit) */
@@ -120,7 +120,7 @@ make_fcontext:
     xorq  %rcx, %rcx
     movq  %rcx, 0xa8(%rax)
 
-    /* zero out make_fcontext's return address (rcx is still zero) */
+    /* zero out sc_make_context's return address (rcx is still zero) */
     movq  %rcx, 0x140(%rax)
 
     /* compute address of transport_t */
@@ -147,4 +147,4 @@ finish:
 .def	_exit;	.scl	2;	.type	32;	.endef  /* standard C library function */
 
 .section .drectve
-.ascii " -export:\"make_fcontext\""
+.ascii " -export:\"sc_make_context\""
