@@ -2,13 +2,13 @@ image: Visual Studio 2015
 
 environment:
     matrix:
-        - TOOLSET: Visual Studio 10 2010
-        - TOOLSET: Visual Studio 11 2012
-        - TOOLSET: Visual Studio 12 2013
-        - TOOLSET: Visual Studio 14 2015
+        - TOOLSET: Visual Studio 10
+        - TOOLSET: Visual Studio 11
+        - TOOLSET: Visual Studio 12
+        - TOOLSET: Visual Studio 14
 
 build_script:
-    - scripts\build-windows.bat Debug
-    - scripts\build-windows.bat Release
-    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build-windows.bat Debug Win64
-    - if "%TOOLSET%" NEQ "Visual Studio 10 2010" scripts\build-windows.bat Release Win64
+    - scripts\ci\build-windows.bat Debug
+    - scripts\ci\build-windows.bat Release
+    - if "%TOOLSET%" NEQ "Visual Studio 10" scripts\ci\build-windows.bat Debug Win64
+    - if "%TOOLSET%" NEQ "Visual Studio 10" scripts\ci\build-windows.bat Release Win64

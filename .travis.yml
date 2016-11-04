@@ -9,41 +9,32 @@ services:
 matrix:
     include:
         - os: linux
+          env: target=android-arm
+        - os: linux
+          env: target=linux-armv6
+        - os: linux
+          env: target=linux-arm64
+        - os: linux
+          env: target=linux-x86
+        - os: linux
+          env: target=linux-x64
+        - os: linux
+          env: target=windows-x86
+        - os: linux
+          env: target=windows-x64
+
+        - os: osx
           env: arch=i386 config=Debug
-        - os: linux
-          env: arch=i386 config=Release
-
-        - os: linux
-          env: arch=x86_64 config=Debug
-        - os: linux
-          env: arch=x86_64 config=Release
-
-        - os: linux
-          env: arch=arm config=Debug
-        - os: linux
-          env: arch=arm config=Release
-
-        - os: osx
-          env: arch=i386 config=Debug
         - os: osx
           env: arch=i386 config=Release
-
         - os: osx
           env: arch=x86_64 config=Debug
         - os: osx
           env: arch=x86_64 config=Release
-
         - os: osx
           env: arch=universal config=Debug
         - os: osx
           env: arch=universal config=Release
 
-addons:
-    apt:
-        packages:
-            - build-essential
-            - gcc-multilib
-            - g++-multilib
-
 script:
-    - "scripts/build-${TRAVIS_OS_NAME}.sh"
+    - "scripts/ci/build-${TRAVIS_OS_NAME}.sh"

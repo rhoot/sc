@@ -3,7 +3,7 @@
  * License: https://opensource.org/licenses/ISC
  */
 
-.file	"set_xmm_register_x86_64_ms_pe_gas.S"
+.file	"set_xmm_register_x86_64_ms_pe_gas.s"
 .text
 .p2align 4,,15
 .globl	set_xmm_register
