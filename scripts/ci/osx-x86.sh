@@ -1,10 +1,10 @@
 #!/bin/bash -ex
 
-# The toolchain file for linux-x64 is set up with the wrong asm compiler.
-CMAKE_FLAGS="-DCMAKE_ASM_COMPILER=/usr/bin/x86_64-linux-gnu-gcc"
+CMAKE_FLAGS="-DCMAKE_OSX_ARCHITECTURES=i386"
+EXAMPLE_BUILD_ARGS="-arch i386"
 
-source "$(dirname "$0")/dockcross.sh"
-dockcross_build
+source "$(dirname "$0")/osx.sh"
+osx_build
 
 # Run unit tests
 build-debug/bin/sc_tests --reporter console

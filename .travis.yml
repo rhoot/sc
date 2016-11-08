@@ -24,17 +24,11 @@ matrix:
           env: target=windows-x64
 
         - os: osx
-          env: arch=i386 config=Debug
+          env: target=osx-x86
         - os: osx
-          env: arch=i386 config=Release
+          env: target=osx-x64
         - os: osx
-          env: arch=x86_64 config=Debug
-        - os: osx
-          env: arch=x86_64 config=Release
-        - os: osx
-          env: arch=universal config=Debug
-        - os: osx
-          env: arch=universal config=Release
+          env: target=osx-universal
 
 script:
-    - "scripts/ci/build-${TRAVIS_OS_NAME}.sh"
+    - "scripts/ci/$target.sh"
