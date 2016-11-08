@@ -3,7 +3,7 @@
 # The toolchain file for linux-x64 is set up with the wrong asm compiler.
 CMAKE_FLAGS="-DCMAKE_ASM_COMPILER=/usr/bin/x86_64-linux-gnu-gcc"
 
-source "$(dirname "$0")/dockcross.sh"
+source "$(dirname "$0")/helpers.sh"
 dockcross_build
 
 # Run unit tests

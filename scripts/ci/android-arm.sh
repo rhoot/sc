@@ -1,4 +1,4 @@
 #!/bin/bash -ex
 
-source "$(dirname "$0")/dockcross.sh"
+source "$(dirname "$0")/helpers.sh"
 dockcross_build

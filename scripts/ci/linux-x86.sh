@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-source "$(dirname "$0")/dockcross.sh"
+source "$(dirname "$0")/helpers.sh"
 dockcross_build
 
 # Run unit tests. For some reason travis has troubles running these directly,

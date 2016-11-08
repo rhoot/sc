@@ -3,7 +3,7 @@
 CMAKE_FLAGS="-DCMAKE_OSX_ARCHITECTURES=x86_64"
 EXAMPLE_BUILD_ARGS="-arch x86_64"
 
-source "$(dirname "$0")/osx.sh"
+source "$(dirname "$0")/helpers.sh"
 osx_build
 
 # Run unit tests
