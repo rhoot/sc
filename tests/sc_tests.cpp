@@ -124,6 +124,47 @@ DESCRIBE("sc_yield") {
 }
 
 //
+// sc_set_data
+//
+
+DESCRIBE("sc_set_data") {
+
+    IT("should store the pointer") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), empty_proc);
+        auto pointer = (void*)uintptr_t(0xbadf00d);
+        sc_set_data(context, pointer);
+        REQUIRE(sc_get_data(context) == pointer);
+        sc_context_destroy(context);
+    }
+
+}
+
+//
+// sc_get_data
+//
+
+DESCRIBE("sc_get_data") {
+
+    IT("should default to NULL") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), empty_proc);
+        REQUIRE(sc_get_data(context) == nullptr);
+        sc_context_destroy(context);
+    }
+
+    IT("should get the pointer") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), empty_proc);
+        auto pointer = (void*)uintptr_t(0xbadf00d);
+        sc_set_data(context, pointer);
+        REQUIRE(sc_get_data(context) == pointer);
+        sc_context_destroy(context);
+    }
+
+}
+
+//
 // sc_current_context tests
 //
 

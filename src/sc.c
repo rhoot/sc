@@ -38,6 +38,7 @@ typedef struct sc_context {
     sc_context_sp_t ctx;
     sc_context_proc_t proc;
     sc_context_t parent;
+    void * user_data;
 } context_data;
 
 #if defined(USE_PTHREAD_SPECIFICS)
@@ -175,6 +176,7 @@ sc_context_t SC_CALL_DECL sc_context_create (
     data = (context_data*)data_addr;
     data->proc = proc;
     data->parent = sc_current_context();
+    data->user_data = NULL;
 
     /* Transfer the proc pointer to the context by briefly switching to it */
     data->ctx = sc_jump_context(ctx, data).ctx;
@@ -208,6 +210,14 @@ void* SC_CALL_DECL sc_yield (void* value) {
     context_data* current = sc_current_context();
     assert(current->parent != NULL);
     return sc_switch(current->parent, value);
+}
+
+void sc_set_data (sc_context_t context, void* data) {
+    context->user_data = data;
+}
+
+void* sc_get_data (sc_context_t context) {
+    return context->user_data;
 }
 
 sc_context_t SC_CALL_DECL sc_current_context (void) {

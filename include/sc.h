@@ -82,6 +82,18 @@ extern "C" {
      **                and undefined behavior in release builds. */
     void* SC_CALL_DECL sc_yield (void* value);
 
+    /** Assign a user-specified pointer to be attached to the given context.
+     **
+     ** * `context`: Context to attach the pointer to.
+     ** * `data`:    Pointer to attach to the context. */
+    void sc_set_data (sc_context_t context, void* data);
+
+    /** Get the user-specified pointer assigned to the given context through
+     ** `sc_set_data`.
+     **
+     ** * `context`: Context to get the attached pointer for. */
+    void* sc_get_data (sc_context_t context);
+
     /** Get the handle for the currently executing context. */
     sc_context_t SC_CALL_DECL sc_current_context (void);
 
