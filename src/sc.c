@@ -212,11 +212,11 @@ void* SC_CALL_DECL sc_yield (void* value) {
     return sc_switch(current->parent, value);
 }
 
-void sc_set_data (sc_context_t context, void* data) {
+void SC_CALL_DECL sc_set_data (sc_context_t context, void* data) {
     context->user_data = data;
 }
 
-void* sc_get_data (sc_context_t context) {
+void* SC_CALL_DECL sc_get_data (sc_context_t context) {
     return context->user_data;
 }
 
