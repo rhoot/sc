@@ -1,16 +1,21 @@
 #!/bin/bash -ex
 
-# The toolchain file for linux-x64 is set up with the wrong asm compiler.
-CMAKE_FLAGS="-DCMAKE_ASM_COMPILER=/usr/bin/x86_64-linux-gnu-gcc"
-
-source "$(dirname "$0")/helpers.sh"
-dockcross_build
-
-# Run unit tests
+# Build debug
+mkdir build-debug
+cmake -DCMAKE_BUILD_TYPE=Debug -Bbuild-debug -H.
+make -C build-debug
 build-debug/bin/sc_tests --reporter console
+
+# Build release
+mkdir build-release
+cmake -DCMAKE_BUILD_TYPE=Release -Bbuild-release -H.
+make -C build-release
 build-release/bin/sc_tests --reporter console
 
-# Run examples
-for file in $(ls examples/*.c); do
-    ${file%.*} > /dev/null
+# Build and run examples
+cd examples
+
+for file in $(ls *.c); do
+    cc -Wall -Werror -I../include -L../build-release/lib $file -lsc -o ${file%.*}
+    ./${file%.*} > /dev/null
 done
