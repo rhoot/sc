@@ -39,7 +39,11 @@
 
 #ifdef SC_META_INCLUDED
 
+# clang does not understand .cpu for aarch64
+#ifndef __clang__
 .cpu    generic+fp+simd
+#endif
+
 .text
 .align  2
 .global sc_jump_context
