@@ -8,7 +8,7 @@
 #include "framework.hpp"
 
 #include <cstdint>
-#include <xmmintrin.h>
+#include <emmintrin.h>
 
 #include <sc.h>
 
