@@ -9,9 +9,6 @@
 #include <sc.h>
 #include <cstdint>
 
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-
 //
 // Win64 ABI tests
 //
@@ -125,6 +122,13 @@ DESCRIBE("Windows x64 ABI") {
 //
 // Win32 API tests
 //
+// Cannot be built in MinGW since it may be cross compiling on another OS.
+//
+
+#if defined(_MSC_VER)
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 namespace {
 
@@ -145,5 +149,7 @@ DESCRIBE("Win32 API") {
     }
 
 }
+
+#endif // defined(_MSC_VER)
 
 #endif // defined(_WIN32)
