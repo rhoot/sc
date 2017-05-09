@@ -97,7 +97,7 @@ sc_jump_context PROC FRAME
     mov  rax, [r10+01478h]
     push  rax
     ; save fiber local storage
-    mov  rax, [r10+018h]
+    mov  rax, [r10+020h]
     push  rax
 
     ; preserve non-volatile xmm registers
@@ -142,7 +142,7 @@ sc_jump_context PROC FRAME
     mov  r10, gs:[030h]
     ; restore fiber local storage
     pop  rax
-    mov  [r10+018h], rax
+    mov  [r10+020h], rax
     ; restore deallocation stack
     pop  rax
     mov  [r10+01478h], rax

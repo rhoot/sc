@@ -108,7 +108,7 @@ sc_jump_context:
     movq  0x1478(%r10), %rax
     pushq  %rax
     /* save fiber local storage */
-    movq  0x18(%r10), %rax
+    movq  0x20(%r10), %rax
     pushq  %rax
 
     /* preserve non-volatile xmm registers */
@@ -153,7 +153,7 @@ sc_jump_context:
     movq  %gs:(0x30), %r10
     /* restore fiber local storage */
     popq  %rax
-    movq  %rax, 0x18(%r10)
+    movq  %rax, 0x20(%r10)
     /* restore deallocation stack */
     popq  %rax
     movq  %rax, 0x1478(%r10)

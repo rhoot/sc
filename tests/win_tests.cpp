@@ -1,20 +1,22 @@
-//---
+﻿//---
 // Copyright (c) 2016 Johan Sköld
 // License: https://opensource.org/licenses/ISC
 //---
 
+#include "framework.hpp"
+#include <sc.h>
+#include <cstdint>
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+//
+// Win64 ABI tests
+//
+
 #if defined(_WIN64)
 
-#include "framework.hpp"
-
-#include <cstdint>
 #include <emmintrin.h>
-
-#include <sc.h>
-
-//
-// Helpers
-//
 
 extern "C" __m128i get_xmm_register (int index);
 extern "C" void set_xmm_register (int index, __m128i value);
@@ -117,3 +119,27 @@ DESCRIBE("Windows x64 ABI") {
 }
 
 #endif // defined(_WIN64)
+
+//
+// Win32 API tests
+//
+
+namespace {
+
+    void SC_CALL_DECL test_fiber_data(void*) {
+        sc_yield(GetCurrentFiber());
+    }
+
+}
+
+DESCRIBE("Win32 API") {
+
+    IT("should return NULL for GetCurrentFiber()") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), test_fiber_data);
+        REQUIRE(context != nullptr);
+        REQUIRE(sc_switch(context, nullptr) == nullptr);
+        sc_context_destroy(context);
+    }
+
+}

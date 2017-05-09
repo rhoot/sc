@@ -78,7 +78,7 @@ add_executable(sc_tests
     tests/framework.hpp
     tests/main.cpp
     tests/sc_tests.cpp
-    tests/win_abi_tests.cpp)
+    tests/win_tests.cpp)
 
 if(MSVC)
     if(CMAKE_CL_64 EQUAL 1)
