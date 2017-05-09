@@ -3,6 +3,8 @@
 // License: https://opensource.org/licenses/ISC
 //---
 
+#if defined(_WIN32)
+
 #include "framework.hpp"
 #include <sc.h>
 #include <cstdint>
@@ -143,3 +145,5 @@ DESCRIBE("Win32 API") {
     }
 
 }
+
+#endif // defined(_WIN32)
