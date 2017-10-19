@@ -127,6 +127,7 @@ static void context_proc (sc_transfer_t transfer) {
     /* Update the current context */
     sc_current_context()->ctx = transfer.ctx;
     set_current(data);
+    data->ctx = NULL;
 
     /* Execute the context proc */
     data->proc(transfer.data);
@@ -200,6 +201,7 @@ void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
         transfer = sc_jump_context(target->ctx, value);
         sc_current_context()->ctx = transfer.ctx;
         set_current(this_ctx);
+        this_ctx->ctx = NULL;
         value = transfer.data;
     }
 
@@ -218,6 +220,12 @@ void SC_CALL_DECL sc_set_data (sc_context_t context, void* data) {
 
 void* SC_CALL_DECL sc_get_data (sc_context_t context) {
     return context->user_data;
+}
+
+sc_state_t SC_CALL_DECL sc_get_state (sc_context_t context) {
+    sc_state_t state;
+    sc_context_state(&state, context->ctx);
+    return state;
 }
 
 sc_context_t SC_CALL_DECL sc_current_context (void) {

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <stddef.h> /* size_t */
+#include <stdint.h> /* uint32_t, uint64_t */
 
 #if defined(_MSC_VER)
 #   define SC_CALL_DECL __stdcall
@@ -22,6 +23,46 @@ extern "C" {
 
     /** Context handle type. */
     typedef struct sc_context* sc_context_t;
+
+    /** CPU types, for use with `sc_state_t`. */
+    typedef enum {
+        SC_CPU_TYPE_UNKNOWN,
+        SC_CPU_TYPE_X86,
+        SC_CPU_TYPE_X64,
+    } sc_cpu_type_t;
+
+    /** Context state, as captured by `sc_get_state`. */
+    typedef struct {
+        sc_cpu_type_t type;
+
+        union {
+            /** Registers captured on an x86 CPU (when `type` is
+             ** `SC_CPU_TYPE_X86`. */
+            struct {
+                uint32_t edi;
+                uint32_t esi;
+                uint32_t ebx;
+                uint32_t ebp;
+                uint32_t eip;
+                uint32_t esp;
+            } x86;
+            
+            /** Registers captured on an x64 CPU (when `type` is
+             ** `SC_CPU_TYPE_X64`. */
+            struct {
+                uint64_t r12;
+                uint64_t r13;
+                uint64_t r14;
+                uint64_t r15;
+                uint64_t rdi;
+                uint64_t rsi;
+                uint64_t rbx;
+                uint64_t rbp;
+                uint64_t rip;
+                uint64_t rsp;
+            } x64;
+        } registers;
+    } sc_state_t;
 
     /** Context procedure type. */
     typedef void (SC_CALL_DECL * sc_context_proc_t) (void* param);
@@ -93,6 +134,14 @@ extern "C" {
      **
      ** * `context`: Context to get the attached pointer for. */
     void* SC_CALL_DECL sc_get_data (sc_context_t context);
+
+    /** Get the current state of the given context.
+     **
+     ** * `context`: Context to get the state of.
+     **
+     ** **Note:** Currently only implemented for Windows. Other platforms will
+     **           have the type set to `SC_CPU_TYPE_UNKNOWN`. */
+    sc_state_t SC_CALL_DECL sc_get_state (sc_context_t context);
 
     /** Get the handle for the currently executing context. */
     sc_context_t SC_CALL_DECL sc_current_context (void);

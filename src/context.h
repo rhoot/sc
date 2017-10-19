@@ -7,6 +7,8 @@
 
 #include <stddef.h> /* size_t */
 
+#include <sc.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -20,6 +22,15 @@ extern "C" {
 
     sc_transfer_t sc_jump_context (sc_context_sp_t to, void* vp);
     sc_context_sp_t sc_make_context (void* sp, size_t size, void(*fn)(sc_transfer_t));
+
+    /* sc_context_state is only implemented for Windows atm. */
+#if defined(_WIN32)
+    void sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
+#else
+    static void sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+        state->type = SC_CPU_TYPE_UNKNOWN;
+    }
+#endif
 
     /* For the provided fcontext implementations, there's no necessary work to
        be done for freeing a context, but some custom backends (for proprietary

@@ -44,19 +44,21 @@ add_library(sc STATIC
 if(MSVC)
     target_sources(sc PRIVATE
         src/asm/jump_masm.asm
-        src/asm/make_masm.asm)
+        src/asm/make_masm.asm
+        src/asm/state_masm.asm)
 
     if(CMAKE_CL_64 EQUAL 0)
-        set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm PROPERTIES
+        set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm src/asm/state_masm.asm PROPERTIES
             COMPILE_FLAGS "/safeseh /DSC_WIN32")
     else()
-        set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm PROPERTIES
+        set_source_files_properties(src/asm/jump_masm.asm src/asm/make_masm.asm src/asm/state_masm.asm PROPERTIES
             COMPILE_FLAGS "/DSC_WIN64")
     endif()
 else()
     target_sources(sc PRIVATE
         src/asm/jump_gas.S
-        src/asm/make_gas.S)
+        src/asm/make_gas.S
+        src/asm/state_gas.S)
 endif()
 
 target_compile_options(sc
