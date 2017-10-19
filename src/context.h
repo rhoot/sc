@@ -27,7 +27,7 @@ extern "C" {
 #if defined(_WIN32)
     void sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
 #else
-    static void sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+    static void sc_context_state (sc_state_t* state, sc_context_sp_t) {
         state->type = SC_CPU_TYPE_UNKNOWN;
     }
 #endif
