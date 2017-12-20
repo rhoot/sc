@@ -3,14 +3,16 @@ sc [![travis-ci status](https://travis-ci.org/rhoot/sc.svg?branch=master)](https
 
 Cross platform co-routine library exposed through a minimal C API.
 
-|         | arm | arm64 |mips | universal | x86 | x86_64 |
-|---------|-----|-------|-----|-----------|-----|--------|
-| Android |  ✓  |       |  ✓  |           |  ✓  |    ✓   |
-| FreeBSD |     |       |     |           |     |    ✓   |
-| iOS     |  ✓  |   ✓   |     |     ✓     |  ✓  |    ✓   |
-| Linux   |  ✓  |   ✓   |     |           |  ✓  |    ✓   |
-| OSX     |     |       |     |     ✓     |  ✓  |    ✓   |
-| Windows |     |       |     |           |  ✓  |    ✓   |
+|         | arm | arm64           |mips | universal | x86 | x86_64 |
+|---------|-----|-----------------|-----|-----------|-----|--------|
+| Android |  ✓  |  ✓<sup>\*</sup> |  ✓  |           |  ✓  |    ✓   |
+| FreeBSD |     |                 |     |           |     |    ✓   |
+| iOS     |  ✓  |        ✓        |     |     ✓     |  ✓  |    ✓   |
+| Linux   |  ✓  |        ✓        |     |           |  ✓  |    ✓   |
+| OSX     |     |                 |     |     ✓     |  ✓  |    ✓   |
+| Windows |     |                 |     |           |  ✓  |    ✓   |
+
+*<sup>\*</sup>: Builds properly, but not tested.*
 
 See [the wiki] for build instructions.
 
