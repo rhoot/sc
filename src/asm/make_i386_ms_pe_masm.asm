@@ -20,7 +20,7 @@
 ;  ---------------------------------------------------------------------------------
 ;  |   020h  |  024h   |  028h   |   02ch  |   030h  |   034h  |   038h  |   03ch  |
 ;  ---------------------------------------------------------------------------------
-;  |   EBP   |   EIP   |    to   |   data  |         |  EH NXT |SEH HNDLR|         |
+;  |   EBP   |   EIP   |    to   |   data  |   zero  |   zero  |  EH NXT |SEH HNDLR|
 ;  ---------------------------------------------------------------------------------
 
 .386
@@ -71,14 +71,17 @@ sc_make_context PROC
 
     ; compute abs address of label trampoline
     mov  ecx, trampoline
-    ; save address of trampoline as return-address for context-function
+    ; save address of trampoline as return-address for the current frame
     ; will be entered after calling sc_jump_context() first time
     mov  [eax+024h], ecx
 
-    ; compute abs address of label finish
-    mov  ecx, finish
-    ; save address of finish as return-address for context-function
-    ; will be entered after context-function returns
+    ; set up a dummy empty stack frame to signal the top of the stack has been reached
+    xor  ecx, ecx
+    mov  [eax+030h], ecx
+    mov  [eax+034h], ecx
+
+    ; store the empty stack as the previous base
+    lea  ecx, [eax+030h]
     mov  [eax+020h], ecx
 
     ; traverse current seh chain to get the last exception handler installed by Windows
@@ -107,13 +110,13 @@ found:
     ; load 'handler' member of SEH == address of last SEH handler installed by Windows
     mov  ecx, [ecx+04h]
     ; save address in ECX as SEH handler for context
-    mov  [eax+038h], ecx
+    mov  [eax+03ch], ecx
     ; set ECX to -1
     mov  ecx, 0ffffffffh
     ; save ECX as next SEH item
-    mov  [eax+034h], ecx
+    mov  [eax+038h], ecx
     ; load address of next SEH item
-    lea  ecx, [eax+034h]
+    lea  ecx, [eax+038h]
     ; save next SEH
     mov  [eax+010h], ecx
 
@@ -124,7 +127,14 @@ trampoline:
     ; FCTX == EAX, DATA == EDX
     mov  [esp], eax
     mov  [esp+04h], edx
-    push ebp
+
+    ; compute abs address of label finish
+    mov  ecx, finish
+
+    ; save address of finish as return-address for the context-function
+    ; will be entered after the context-function returns
+    push ecx
+
     ; jump to context-function
     jmp ebx
 

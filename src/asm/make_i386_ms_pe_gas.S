@@ -19,7 +19,7 @@
 *  --------------------------------------------------------------------------------- *
 *  |   020h  |  024h   |  028h   |   02ch  |   030h  |   034h  |   038h  |   03ch  | *
 *  --------------------------------------------------------------------------------- *
-*  |   EBP   |   EIP   |    to   |   data  |         |  EH NXT |SEH HNDLR|         | *
+*  |   EBP   |   EIP   |    to   |   data  |   zero  |   zero  |  EH NXT |SEH HNDLR| *
 *  --------------------------------------------------------------------------------- *
 *************************************************************************************/
 
@@ -72,14 +72,17 @@ _sc_make_context:
 
     /* compute abs address of label trampoline */
     movl  $trampoline, %ecx
-    /* save address of trampoline as return-address for context-function */
+    /* save address of trampoline as return-address for the current frame */
     /* will be entered after calling sc_jump_context() first time */
     movl  %ecx, 0x24(%eax)
 
-    /* compute abs address of label finish */
-    movl  $finish, %ecx
-    /* save address of finish as return-address for context-function */
-    /* will be entered after context-function returns */
+    /* set up a dummy empty stack frame to signal the top of the stack has been reached */
+    xorl  %ecx, %ecx
+    movl  %ecx, 0x30(%eax)
+    movl  %ecx, 0x34(%eax)
+
+    ; store the empty stack as the previous base
+    leal  0x30(%eax), %ecx
     movl  %ecx, 0x20(%eax)
 
     /* traverse current seh chain to get the last exception handler installed by Windows */
@@ -106,13 +109,13 @@ found:
     /* load 'handler' member of SEH == address of last SEH handler installed by Windows */
     movl  0x04(%ecx), %ecx
     /* save address in ECX as SEH handler for context */
-    movl  %ecx, 0x38(%eax)
+    movl  %ecx, 0x3c(%eax)
     /* set ECX to -1 */
     movl  $0xffffffff, %ecx
     /* save ECX as next SEH item */
-    movl  %ecx, 0x34(%eax)
+    movl  %ecx, 0x38(%eax)
     /* load address of next SEH item */
-    leal  0x34(%eax), %ecx
+    leal  0x38(%eax), %ecx
     /* save next SEH */
     movl  %ecx, 0x10(%eax)
 
@@ -124,8 +127,14 @@ trampoline:
     /* FCTX == EAX, DATA == EDX */
     movl  %eax, (%esp)
     movl  %edx, 0x4(%esp)
-    /* label finish as return-address */
-    pushl %ebp
+
+    /* compute abs address of label finish */
+    movl  $finish, %ecx
+
+    /* save address of finish as return-address for the context-function */
+    /* will be entered after the context-function returns */
+    pushl %ecx
+
     /* jump to context-function */
     jmp  *%ebx
 

@@ -120,6 +120,51 @@ DESCRIBE("Windows x64 ABI") {
 #endif // defined(_WIN64)
 
 //
+// Win32 ABI tests
+//
+
+#if !defined(_WIN64)
+
+namespace {
+
+    void SC_CALL_DECL test_esp_eip_null(void*) {
+        uint32_t ebpReg;
+        uint32_t eipReg;
+
+        __asm {
+        eiphelper:
+            lea ecx, eiphelper
+            mov ebpReg, ebp
+            mov eipReg, ecx
+        }
+
+        while (ebpReg) {
+            eipReg = *(uint32_t*)(ebpReg + 4);
+            ebpReg = *(uint32_t*)(ebpReg);
+        }
+
+        bool success = !ebpReg && !eipReg;
+        sc_yield(&success);
+    }
+
+}
+
+DESCRIBE("Windows x86 ABI") {
+
+    IT("should have a NULL stack base and return pointer at the bottom of the stack") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        auto context = sc_context_create(stack, sizeof(stack), test_esp_eip_null);
+        REQUIRE(context != nullptr);
+        auto success = (bool*)sc_switch(context, nullptr);
+        REQUIRE(success);
+        sc_context_destroy(context);
+    }
+
+}
+
+#endif
+
+//
 // Win32 API tests
 //
 // Cannot be built in MinGW since it may be cross compiling on another OS.
