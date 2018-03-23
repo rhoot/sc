@@ -81,7 +81,7 @@ _sc_make_context:
     movl  %ecx, 0x30(%eax)
     movl  %ecx, 0x34(%eax)
 
-    ; store the empty stack as the previous base
+    /* store the empty stack as the previous base */
     leal  0x30(%eax), %ecx
     movl  %ecx, 0x20(%eax)
 
