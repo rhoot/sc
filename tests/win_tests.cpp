@@ -131,12 +131,23 @@ namespace {
         uint32_t ebpReg;
         uint32_t eipReg;
 
+#if defined(_MSC_VER)
         __asm {
         eiphelper:
             lea ecx, eiphelper
             mov ebpReg, ebp
             mov eipReg, ecx
         }
+#else
+        asm (
+            R"(
+            eiphelper:
+                movl %%ebp, %0
+                leal eiphelper, %1
+            )"
+            : "=r"(ebpReg), "=r"(eipReg)
+        );
+#endif
 
         while (ebpReg) {
             eipReg = *(uint32_t*)(ebpReg + 4);
