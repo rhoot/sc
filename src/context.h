@@ -9,21 +9,17 @@
 
 #include <sc.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+typedef void* sc_context_sp_t;
 
-    typedef void* sc_context_sp_t;
+typedef struct {
+    sc_context_sp_t ctx;
+    void* data;
+} sc_transfer_t;
 
-    typedef struct {
-        sc_context_sp_t ctx;
-        void* data;
-    } sc_transfer_t;
+SC_EXTERN sc_transfer_t SC_CALL_DECL sc_jump_context (sc_context_sp_t to, void* vp);
+SC_EXTERN sc_context_sp_t SC_CALL_DECL sc_make_context (void* sp, size_t size, void(*fn)(sc_transfer_t));
 
-    sc_transfer_t sc_jump_context (sc_context_sp_t to, void* vp);
-    sc_context_sp_t sc_make_context (void* sp, size_t size, void(*fn)(sc_transfer_t));
-
-    /* sc_context_state is only implemented for Windows and macOS atm. */
+/* sc_context_state is only implemented for Windows and macOS atm. */
 
 #if defined(_WIN32)
 #   define SC_HAS_CONTEXT_STATE_IMPL
@@ -32,7 +28,7 @@ extern "C" {
 #endif
 
 #if defined(SC_HAS_CONTEXT_STATE_IMPL)
-    void sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
+    SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
 #else
     static void sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
         (void)ctx;
@@ -40,16 +36,12 @@ extern "C" {
     }
 #endif
 
-    /* For the provided fcontext implementations, there's no necessary work to
-       be done for freeing a context, but some custom backends (for proprietary
-       hardware) do. */
+/* For the provided fcontext implementations, there's no necessary work to
+   be done for freeing a context, but some custom backends (for proprietary
+   hardware) do. */
 
 #if defined(SC_CUSTOM_FREE_CONTEXT)
-    void sc_free_context (sc_context_sp_t);
+    SC_EXTERN void SC_CALL_DECL sc_free_context (sc_context_sp_t);
 #else
     static void sc_free_context (sc_context_sp_t ctx) { (void)ctx; }
-#endif
-
-#if defined(__cplusplus)
-} /* extern "C" */
 #endif
