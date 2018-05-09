@@ -218,3 +218,54 @@ DESCRIBE("sc_main_context") {
     }
 
 }
+
+//
+// sc_get_state tests
+//
+
+#if defined(_WIN32) || (defined(__APPLE__) && defined(__MACH__))
+
+DESCRIBE("sc_get_state") {
+
+    IT("should return the current context's state correctly") {
+        auto state = sc_get_state(sc_current_context());
+
+        // We can't really test anything useful besides the CPU type, since we
+        // have no idea what the registers should be set to.
+        const auto isX86 = state.type == SC_CPU_TYPE_X86;
+        const auto isX64 = state.type == SC_CPU_TYPE_X64;
+        REQUIRE((isX86 || isX64));
+    }
+
+    IT("should return a yielded context's state") {
+        uint8_t stack[SC_MIN_STACK_SIZE];
+        const auto stackEnd = stack + sizeof(stack);
+
+        auto context = sc_context_create(stack, sizeof(stack), yield_main_proc);
+        sc_switch(context, nullptr);
+        auto state = sc_get_state(context);
+        sc_context_destroy(context);
+
+        switch (state.type) {
+            case SC_CPU_TYPE_X86:
+                REQUIRE(state.registers.x86.esp >= (uintptr_t)stack);
+                REQUIRE(state.registers.x86.esp <= (uintptr_t)stackEnd);
+                REQUIRE(state.registers.x86.eip >= (uintptr_t)&sc_switch);
+                REQUIRE(state.registers.x86.eip <= ((uintptr_t)&sc_switch) + 0x100);
+                break;
+
+            case SC_CPU_TYPE_X64:
+                REQUIRE(state.registers.x64.rsp >= (uintptr_t)stack);
+                REQUIRE(state.registers.x64.rsp <= (uintptr_t)stackEnd);
+                REQUIRE(state.registers.x64.rip >= (uintptr_t)&sc_switch);
+                REQUIRE(state.registers.x64.rip <= ((uintptr_t)&sc_switch) + 0x100);
+                break;
+
+            default:
+                REQUIRE(!"Invalid return value.");
+        }
+    }
+
+}
+
+#endif

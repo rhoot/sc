@@ -15,6 +15,12 @@
         #error "Unsupported architecture"
     #endif
 
+#elif defined(__APPLE__)
+
+    #if defined(__x86_64__)
+        #include "state_x86_64_sysv_macho_gas.S"
+    #endif
+
 #endif
 
 #undef SC_META_INCLUDED
