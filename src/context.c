@@ -23,8 +23,6 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.x86.eip = stack[9];
         state->registers.x86.esp = (uint32_t)&stack[10];
     } else {
-        state->registers.x86.eip = _ReturnAddress();
-
 #if defined(__MINGW32__)
         void* x86 = &state->registers.x86;
         asm (
@@ -38,6 +36,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
             : "=r" (x86)
         );
 #else
+        state->registers.x86.eip = _ReturnAddress();
         __asm {
             mov ecx, state
             mov [ecx]sc_state_t.registers.x86.edi, edi
@@ -110,8 +109,8 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.x64.rbp = regs.Rbp;
         state->registers.x64.rip = regs.Rip;
         state->registers.x64.rsp = regs.Rsp;
-    }
 #endif
+    }
 }
 
 #endif
