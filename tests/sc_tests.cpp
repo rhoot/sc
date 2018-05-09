@@ -250,15 +250,18 @@ DESCRIBE("sc_get_state") {
             case SC_CPU_TYPE_X86:
                 REQUIRE(state.registers.x86.esp >= (uintptr_t)stack);
                 REQUIRE(state.registers.x86.esp <= (uintptr_t)stackEnd);
-                REQUIRE(state.registers.x86.eip >= (uintptr_t)&sc_switch);
-                REQUIRE(state.registers.x86.eip <= ((uintptr_t)&sc_switch) + 0x100);
+
+                // We can't really test any other registers, since we don't
+                // know what values they should have. As for `eip`, we know it
+                // should be inside sc_switch, but thanks to MSVC's jump tables
+                // we can't determine an address range for that function.
                 break;
 
             case SC_CPU_TYPE_X64:
                 REQUIRE(state.registers.x64.rsp >= (uintptr_t)stack);
                 REQUIRE(state.registers.x64.rsp <= (uintptr_t)stackEnd);
-                REQUIRE(state.registers.x64.rip >= (uintptr_t)&sc_switch);
-                REQUIRE(state.registers.x64.rip <= ((uintptr_t)&sc_switch) + 0x100);
+
+                // We can't test any other registers, same as for x86.
                 break;
 
             default:

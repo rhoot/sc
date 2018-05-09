@@ -11,6 +11,8 @@
 
 #if defined(_WIN32) && (defined(_M_IX86) || defined(_X86_))
 
+#define SC_HAS_CONTEXT_STATE_IMPL
+
 SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_X86;
 
@@ -35,7 +37,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
             : "r" (state)
         );
 #else
-        state->registers.x86.eip = _ReturnAddress();
+        state->registers.x86.eip = (uint32_t)_ReturnAddress();
         __asm {
             mov ecx, state
             mov [ecx]sc_state_t.registers.x86.edi, edi
@@ -56,6 +58,8 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 //
 
 #if defined(_WIN64)
+
+#define SC_HAS_CONTEXT_STATE_IMPL
 
 #if !defined(__MINGW64__)
 #   define WIN32_LEAN_AND_MEAN
@@ -123,6 +127,8 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 #if defined(__APPLE__) && defined(__i386__)
 
+#define SC_HAS_CONTEXT_STATE_IMPL
+
 SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_X86;
 
@@ -156,6 +162,8 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 //
 
 #if defined(__APPLE__) && defined(__x86_64__)
+
+#define SC_HAS_CONTEXT_STATE_IMPL
 
 SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_X64;
@@ -191,6 +199,20 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
             : "r8"
         );
     }
+}
+
+#endif
+
+
+//
+// Fallback implementation
+//
+
+#if !defined(SC_HAS_CONTEXT_STATE_IMPL)
+
+SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+    (void)ctx;
+    state->type = SC_CPU_TYPE_UNKNOWN;
 }
 
 #endif
