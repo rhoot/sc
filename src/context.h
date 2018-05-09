@@ -30,7 +30,7 @@ SC_EXTERN sc_context_sp_t SC_CALL_DECL sc_make_context (void* sp, size_t size, v
 #if defined(SC_HAS_CONTEXT_STATE_IMPL)
     SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
 #else
-    static void sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+    static inline void sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
         (void)ctx;
         state->type = SC_CPU_TYPE_UNKNOWN;
     }
@@ -43,5 +43,5 @@ SC_EXTERN sc_context_sp_t SC_CALL_DECL sc_make_context (void* sp, size_t size, v
 #if defined(SC_CUSTOM_FREE_CONTEXT)
     SC_EXTERN void SC_CALL_DECL sc_free_context (sc_context_sp_t);
 #else
-    static void sc_free_context (sc_context_sp_t ctx) { (void)ctx; }
+    static inline void sc_free_context (sc_context_sp_t ctx) { (void)ctx; }
 #endif
