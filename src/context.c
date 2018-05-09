@@ -25,6 +25,19 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
     } else {
         state->registers.x86.eip = _ReturnAddress();
 
+#if defined(__MINGW32__)
+        void* x86 = &state->registers.x86;
+        asm (
+            "leal   (%%eip), %%ecx \n"
+            "movl   %%edi, 0x00(%0) \n"
+            "movl   %%esi, 0x04(%0) \n"
+            "movl   %%ebx, 0x08(%0) \n"
+            "movl   %%ebp, 0x0c(%0) \n"
+            "movl   %%ecx, 0x10(%0) \n"
+            "movl   %%esp, 0x14(%0) \n"
+            : "=r" (x86)
+        );
+#else
         __asm {
             mov ecx, state
             mov [ecx]sc_state_t.registers.x86.edi, edi
@@ -33,6 +46,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
             mov [ecx]sc_state_t.registers.x86.ebp, ebp
             mov [ecx]sc_state_t.registers.x86.esp, esp
         }
+#endif
     }
 }
 
@@ -45,8 +59,10 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 #if defined(_WIN64)
 
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#if !defined(__MINGW64__)
+#   define WIN32_LEAN_AND_MEAN
+#   include <Windows.h>
+#endif
 
 SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_X64;
@@ -64,6 +80,23 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.x64.rip = stack[34];
         state->registers.x64.rsp = (uint64_t)&stack[35];
     } else {
+#if defined(__MINGW64__)
+        void* x64 = &state->registers.x64;
+        asm (
+            "leaq   (%%rip), %%rcx \n"
+            "movq   %%r12, 0x00(%0) \n"
+            "movq   %%r13, 0x08(%0) \n"
+            "movq   %%r14, 0x10(%0) \n"
+            "movq   %%r15, 0x18(%0) \n"
+            "movq   %%rdi, 0x20(%0) \n"
+            "movq   %%rsi, 0x28(%0) \n"
+            "movq   %%rbx, 0x30(%0) \n"
+            "movq   %%rbp, 0x38(%0) \n"
+            "movq   %%rcx, 0x40(%0) \n"
+            "movq   %%rsp, 0x48(%0) \n"
+            : "=r" (x64)
+        );
+#else
         CONTEXT regs;
         GetThreadContext(GetCurrentThread(), &regs);
 
@@ -78,6 +111,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.x64.rip = regs.Rip;
         state->registers.x64.rsp = regs.Rsp;
     }
+#endif
 }
 
 #endif
