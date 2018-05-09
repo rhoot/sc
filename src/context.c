@@ -24,16 +24,15 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.x86.esp = (uint32_t)&stack[10];
     } else {
 #if defined(__MINGW32__)
-        void* x86 = &state->registers.x86;
+        state->registers.x86.eip = (uint32_t)__builtin_return_address(0);
         asm (
-            "leal   (%%eip), %%ecx \n"
-            "movl   %%edi, 0x00(%0) \n"
-            "movl   %%esi, 0x04(%0) \n"
-            "movl   %%ebx, 0x08(%0) \n"
-            "movl   %%ebp, 0x0c(%0) \n"
-            "movl   %%ecx, 0x10(%0) \n"
-            "movl   %%esp, 0x14(%0) \n"
-            : "=r" (x86)
+            "movl   %%edi, 0x04(%0) \n"
+            "movl   %%esi, 0x08(%0) \n"
+            "movl   %%ebx, 0x0c(%0) \n"
+            "movl   %%ebp, 0x10(%0) \n"
+            "movl   %%esp, 0x18(%0) \n"
+            :
+            : "r" (state)
         );
 #else
         state->registers.x86.eip = _ReturnAddress();
@@ -82,7 +81,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 #if defined(__MINGW64__)
         void* x64 = &state->registers.x64;
         asm (
-            "leaq   (%%rip), %%rcx \n"
+            "leaq   (%%rip), %%r8 \n"
             "movq   %%r12, 0x00(%0) \n"
             "movq   %%r13, 0x08(%0) \n"
             "movq   %%r14, 0x10(%0) \n"
@@ -91,9 +90,11 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
             "movq   %%rsi, 0x28(%0) \n"
             "movq   %%rbx, 0x30(%0) \n"
             "movq   %%rbp, 0x38(%0) \n"
-            "movq   %%rcx, 0x40(%0) \n"
+            "movq   %%r8, 0x40(%0) \n"
             "movq   %%rsp, 0x48(%0) \n"
-            : "=r" (x64)
+            :
+            : "r" (x64)
+            : "r8"
         );
 #else
         CONTEXT regs;
@@ -134,16 +135,15 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.x86.eip = stack[4];
         state->registers.x86.esp = (uint32_t)&stack[5];
     } else {
-        void* x86 = &state->registers.x86;
+        state->registers.x86.eip = (uint32_t)__builtin_return_address(0);
         asm (
-            "leal   (%%eip), %%ecx \n"
-            "movl   %%edi, 0x00(%0) \n"
-            "movl   %%esi, 0x04(%0) \n"
-            "movl   %%ebx, 0x08(%0) \n"
-            "movl   %%ebp, 0x0c(%0) \n"
-            "movl   %%ecx, 0x10(%0) \n"
-            "movl   %%esp, 0x14(%0) \n"
-            : "=r" (x86)
+            "movl   %%edi, 0x04(%0) \n"
+            "movl   %%esi, 0x08(%0) \n"
+            "movl   %%ebx, 0x0c(%0) \n"
+            "movl   %%ebp, 0x10(%0) \n"
+            "movl   %%esp, 0x18(%0) \n"
+            :
+            : "r" (state)
         );
     }
 }
@@ -175,7 +175,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
     } else {
         void* x64 = &state->registers.x64;
         asm (
-            "leaq   (%%rip), %%rcx \n"
+            "leaq   (%%rip), %%r8 \n"
             "movq   %%r12, 0x00(%0) \n"
             "movq   %%r13, 0x08(%0) \n"
             "movq   %%r14, 0x10(%0) \n"
@@ -184,9 +184,11 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
             "movq   %%rsi, 0x28(%0) \n"
             "movq   %%rbx, 0x30(%0) \n"
             "movq   %%rbp, 0x38(%0) \n"
-            "movq   %%rcx, 0x40(%0) \n"
+            "movq   %%r8, 0x40(%0) \n"
             "movq   %%rsp, 0x48(%0) \n"
-            : "=r" (x64)
+            :
+            : "r" (x64)
+            : "r8"
         );
     }
 }
