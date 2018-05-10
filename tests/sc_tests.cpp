@@ -223,9 +223,17 @@ DESCRIBE("sc_main_context") {
 // sc_get_state tests
 //
 
-#if defined(_WIN32) || (defined(__APPLE__) && defined(__MACH__))
+#if defined(_WIN32)
+#   define SC_HAS_GET_STATE_IMPL
+#elif defined(__linux__) || defined(__APPLE__)
+#   if defined(__i386__) || defined(__x86_64__)
+#       define SC_HAS_GET_STATE_IMPL
+#   endif
+#endif
 
 DESCRIBE("sc_get_state") {
+
+#if defined(SC_HAS_GET_STATE_IMPL)
 
     IT("should return the current context's state correctly") {
         auto state = sc_get_state(sc_current_context());
@@ -269,6 +277,13 @@ DESCRIBE("sc_get_state") {
         }
     }
 
-}
+#else
+
+    IT("should result in SC_CPU_TYPE_UNKNOWN") {
+        auto state = sc_get_state(sc_current_context());
+        REQUIRE(state.type == SC_CPU_TYPE_UNKNOWN);
+    }
 
 #endif
+
+}

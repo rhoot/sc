@@ -122,10 +122,10 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 
 //
-// macOS (x86)
+// macOS (x86) / Linux (x86)
 //
 
-#if defined(__APPLE__) && defined(__i386__)
+#if (defined(__APPLE__) || defined(__linux__)) && defined(__i386__)
 
 #define SC_HAS_CONTEXT_STATE_IMPL
 
@@ -158,10 +158,10 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 
 //
-// macOS (x64)
+// macOS (x64) / Linux (x64)
 //
 
-#if defined(__APPLE__) && defined(__x86_64__)
+#if (defined(__APPLE__) || defined(__linux__)) && defined(__x86_64__)
 
 #define SC_HAS_CONTEXT_STATE_IMPL
 
