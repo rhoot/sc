@@ -141,8 +141,8 @@ SC_EXTERN void* SC_CALL_DECL sc_get_data (sc_context_t context);
  **
  ** * `context`: Context to get the state of.
  **
- ** **Note:** Currently only implemented for Windows. Other platforms will
- **           have the type set to `SC_CPU_TYPE_UNKNOWN`. */
+ ** **Note:** Currently only implemented for Windows, macOS, and Linux. Other
+ **           platforms will have the type set to `SC_CPU_TYPE_UNKNOWN`. */
 SC_EXTERN sc_state_t SC_CALL_DECL sc_get_state (sc_context_t context);
 
 /** Get the handle for the currently executing context. */
