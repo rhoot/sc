@@ -210,7 +210,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 // Linux (arm)
 //
 
-#if defined(__linux__) && defined(__arm__)
+#if defined(__linux__) && !defined(__ANDROID__) && defined(__arm__)
 
 #define SC_HAS_CONTEXT_STATE_IMPL
 
