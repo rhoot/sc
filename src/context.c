@@ -230,7 +230,13 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.arm.pc = stack[10];
     } else {
         void* arm = &state->registers.arm;
-        asm ("stm %0, {v1-v8,sp,lr,pc}" : : "r" (arm));
+        asm (
+            "stm %0, {v1-v8,lr} \n"
+            "str sp, [%0, #36] \n"
+            "str pc, [%0, #40] \n"
+            :
+            : "r" (arm)
+        );
     }
 }
 

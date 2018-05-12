@@ -225,7 +225,7 @@ DESCRIBE("sc_main_context") {
 
 #if defined(_WIN32)
 #   define SC_HAS_GET_STATE_IMPL
-#elif defined(__linux__)
+#elif defined(__linux__) && !defined(__ANDROID__)
 #   if defined(__i386__) || defined(__x86_64__) || defined(__arm__)
 #       define SC_HAS_GET_STATE_IMPL
 #   endif
