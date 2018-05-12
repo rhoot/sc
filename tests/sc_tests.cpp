@@ -225,7 +225,11 @@ DESCRIBE("sc_main_context") {
 
 #if defined(_WIN32)
 #   define SC_HAS_GET_STATE_IMPL
-#elif defined(__linux__) || defined(__APPLE__)
+#elif defined(__linux__)
+#   if defined(__i386__) || defined(__x86_64__) || defined(__arm__)
+#       define SC_HAS_GET_STATE_IMPL
+#   endif
+#elif defined(__APPLE__)
 #   if defined(__i386__) || defined(__x86_64__)
 #       define SC_HAS_GET_STATE_IMPL
 #   endif
@@ -242,7 +246,8 @@ DESCRIBE("sc_get_state") {
         // have no idea what the registers should be set to.
         const auto isX86 = state.type == SC_CPU_TYPE_X86;
         const auto isX64 = state.type == SC_CPU_TYPE_X64;
-        REQUIRE((isX86 || isX64));
+        const auto isArm = state.type == SC_CPU_TYPE_ARM;
+        REQUIRE((isX86 || isX64 || isArm));
     }
 
     IT("should return a yielded context's state") {
@@ -255,6 +260,13 @@ DESCRIBE("sc_get_state") {
         sc_context_destroy(context);
 
         switch (state.type) {
+            case SC_CPU_TYPE_ARM:
+                REQUIRE(state.registers.arm.sp >= (uintptr_t)stack);
+                REQUIRE(state.registers.arm.sp <= (uintptr_t)stackEnd);
+                REQUIRE(state.registers.arm.pc >= (uintptr_t)&sc_switch);
+                REQUIRE(state.registers.arm.pc <= (uintptr_t)&sc_switch + 0x1000);
+                break;
+
             case SC_CPU_TYPE_X86:
                 REQUIRE(state.registers.x86.esp >= (uintptr_t)stack);
                 REQUIRE(state.registers.x86.esp <= (uintptr_t)stackEnd);

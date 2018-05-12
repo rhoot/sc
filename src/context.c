@@ -205,6 +205,38 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 
 //
+// Linux (arm)
+//
+
+#if defined(__linux__) && defined(__arm__)
+
+#define SC_HAS_CONTEXT_STATE_IMPL
+
+SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+    state->type = SC_CPU_TYPE_ARM;
+
+    if (ctx) {
+        uint32_t* stack = (uint32_t*)ctx;
+        state->registers.arm.v1 = stack[1];
+        state->registers.arm.v2 = stack[2];
+        state->registers.arm.v3 = stack[3];
+        state->registers.arm.v4 = stack[4];
+        state->registers.arm.v5 = stack[5];
+        state->registers.arm.v6 = stack[6];
+        state->registers.arm.v7 = stack[7];
+        state->registers.arm.v8 = stack[8];
+        state->registers.arm.sp = (uint32_t)&stack[11];
+        state->registers.arm.lr = stack[9];
+        state->registers.arm.pc = stack[10];
+    } else {
+        void* arm = &state->registers.arm;
+        asm ("stm %0, {v1-v8,sp,lr,pc}" : : "r" (arm));
+    }
+}
+
+#endif
+
+//
 // Fallback implementation
 //
 

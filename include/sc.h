@@ -31,6 +31,7 @@ typedef enum {
     SC_CPU_TYPE_UNKNOWN,
     SC_CPU_TYPE_X86,
     SC_CPU_TYPE_X64,
+    SC_CPU_TYPE_ARM,
 } sc_cpu_type_t;
 
 /** Context state, as captured by `sc_get_state`. */
@@ -38,6 +39,22 @@ typedef struct {
     sc_cpu_type_t type;
 
     union {
+        /** Registers captured on an arm CPU (when `type` is
+         ** `SC_CPU_TYPE_ARM`. */
+        struct {
+            uint32_t v1;
+            uint32_t v2;
+            uint32_t v3;
+            uint32_t v4;
+            uint32_t v5;
+            uint32_t v6;
+            uint32_t v7;
+            uint32_t v8;
+            uint32_t sp;
+            uint32_t lr;
+            uint32_t pc;
+        } arm;
+
         /** Registers captured on an x86 CPU (when `type` is
          ** `SC_CPU_TYPE_X86`. */
         struct {
