@@ -102,6 +102,8 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         );
 #else
         CONTEXT regs;
+        regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+
         GetThreadContext(GetCurrentThread(), &regs);
 
         state->registers.x64.r12 = regs.R12;
