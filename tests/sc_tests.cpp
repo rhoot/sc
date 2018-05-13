@@ -223,16 +223,12 @@ DESCRIBE("sc_main_context") {
 // sc_get_state tests
 //
 
-#if defined(_WIN32)
+#if defined(_M_IX86) || defined(_X86_) || defined(__i386__)
 #   define SC_HAS_GET_STATE_IMPL
-#elif defined(__linux__) && !defined(__ANDROID__)
-#   if defined(__i386__) || defined(__x86_64__) || defined(__arm__)
-#       define SC_HAS_GET_STATE_IMPL
-#   endif
-#elif defined(__APPLE__)
-#   if defined(__i386__) || defined(__x86_64__)
-#       define SC_HAS_GET_STATE_IMPL
-#   endif
+#elif defined(_M_X64) || defined(_M_AMD64) || defined(__x86_64__) || defined(__amd64__)
+#   define SC_HAS_GET_STATE_IMPL
+#elif defined(__arm__)
+#   define SC_HAS_GET_STATE_IMPL
 #endif
 
 DESCRIBE("sc_get_state") {
