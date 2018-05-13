@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Johan Sköld
+ * Copyright (c) 2018 Johan Sköld
  * License: https://opensource.org/licenses/ISC
  */
 
@@ -32,6 +32,7 @@ typedef enum {
     SC_CPU_TYPE_X86,
     SC_CPU_TYPE_X64,
     SC_CPU_TYPE_ARM,
+    SC_CPU_TYPE_ARM64,
 } sc_cpu_type_t;
 
 /** Context state, as captured by `sc_get_state`. */
@@ -54,6 +55,25 @@ typedef struct {
             uint32_t sp;
             uint32_t pc;
         } arm;
+
+        /** Registers captured on an arm64 CPU (when `type` is
+         ** `SC_CPU_TYPE_ARM`. */
+        struct {
+            uint64_t x19;
+            uint64_t x20;
+            uint64_t x21;
+            uint64_t x22;
+            uint64_t x23;
+            uint64_t x24;
+            uint64_t x25;
+            uint64_t x26;
+            uint64_t x27;
+            uint64_t x28;
+            uint64_t fp;
+            uint64_t lr;
+            uint64_t sp;
+            uint64_t pc;
+        } arm64;
 
         /** Registers captured on an x86 CPU (when `type` is
          ** `SC_CPU_TYPE_X86`. */

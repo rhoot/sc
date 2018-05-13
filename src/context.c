@@ -170,8 +170,8 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.arm.v6 = stack[6];
         state->registers.arm.v7 = stack[7];
         state->registers.arm.v8 = stack[8];
-        state->registers.arm.sp = (uint32_t)&stack[11];
         state->registers.arm.lr = stack[9];
+        state->registers.arm.sp = (uint32_t)&stack[11];
         state->registers.arm.pc = stack[10];
     } else {
         void* arm = &state->registers.arm;
@@ -186,6 +186,53 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 }
 
 #endif
+
+
+//
+// ARM64
+//
+
+#if defined(__arm64__)
+
+#define SC_HAS_CONTEXT_STATE_IMPL
+
+SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+    state->type = SC_CPU_TYPE_ARM64;
+
+    if (ctx) {
+        uint64_t* stack = (uint64_t*)ctx;
+        state->registers.arm64.x19 = stack[0];
+        state->registers.arm64.x20 = stack[1];
+        state->registers.arm64.x21 = stack[2];
+        state->registers.arm64.x22 = stack[3];
+        state->registers.arm64.x23 = stack[4];
+        state->registers.arm64.x24 = stack[5];
+        state->registers.arm64.x25 = stack[6];
+        state->registers.arm64.x26 = stack[7];
+        state->registers.arm64.x27 = stack[8];
+        state->registers.arm64.x28 = stack[9];
+        state->registers.arm64.fp = stack[10];
+        state->registers.arm64.lr = stack[11];
+        state->registers.arm64.sp = (uint64_t)&stack[13];
+        state->registers.arm64.pc = stack[12];
+    } else {
+        arm64 = &state->registers.arm64;
+        asm (
+            "stp x19, x20, [%0, #0x00] \n"
+            "stp x21, x22, [%0, #0x10] \n"
+            "stp x23, x24, [%0, #0x20] \n"
+            "stp x25, x26, [%0, #0x30] \n"
+            "stp x27, x28, [%0, #0x40] \n"
+            "stp fp,  lr,  [%0, #0x50] \n"
+            "stp sp,  pc,  [%0, #0x60] \n"
+            :
+            : "r" (arm64)
+        );
+    }
+}
+
+#endif
+
 
 //
 // Fallback implementation
