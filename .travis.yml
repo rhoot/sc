@@ -11,6 +11,8 @@ matrix:
         - os: linux
           env: target=android-arm
         - os: linux
+          env: target=android-arm64
+        - os: linux
           env: target=linux-armv6
         - os: linux
           env: target=linux-arm64
