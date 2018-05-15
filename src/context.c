@@ -216,17 +216,20 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
         state->registers.arm64.sp = (uint64_t)&stack[13];
         state->registers.arm64.pc = stack[12];
     } else {
-        arm64 = &state->registers.arm64;
+        void* arm64 = &state->registers.arm64;
         asm (
+            "mov x9, sp \n"
+            "adr x10, . \n"
             "stp x19, x20, [%0, #0x00] \n"
             "stp x21, x22, [%0, #0x10] \n"
             "stp x23, x24, [%0, #0x20] \n"
             "stp x25, x26, [%0, #0x30] \n"
             "stp x27, x28, [%0, #0x40] \n"
             "stp fp,  lr,  [%0, #0x50] \n"
-            "stp sp,  pc,  [%0, #0x60] \n"
+            "stp x9,  x10, [%0, #0x60] \n"
             :
             : "r" (arm64)
+            : "x9", "x10"
         );
     }
 }
