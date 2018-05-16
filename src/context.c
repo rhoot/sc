@@ -13,7 +13,7 @@
 
 #   define SC_HAS_CONTEXT_STATE_IMPL
 
-SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_X86;
 
     if (ctx) {
@@ -72,7 +72,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 #       include <Windows.h>
 #   endif
 
-SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_X64;
 
     if (ctx) {
@@ -151,7 +151,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 #define SC_HAS_CONTEXT_STATE_IMPL
 
-SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_ARM;
 
     if (ctx) {
@@ -196,7 +196,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 #define SC_HAS_CONTEXT_STATE_IMPL
 
-SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     state->type = SC_CPU_TYPE_ARM64;
 
     if (ctx) {
@@ -243,7 +243,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t
 
 #if !defined(SC_HAS_CONTEXT_STATE_IMPL)
 
-SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
+void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
     (void)ctx;
     state->type = SC_CPU_TYPE_UNKNOWN;
 }

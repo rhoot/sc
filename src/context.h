@@ -22,16 +22,16 @@ typedef struct {
     void* data;
 } sc_transfer_t;
 
-SC_EXTERN sc_transfer_t SC_CALL_DECL sc_jump_context (sc_context_sp_t to, void* vp);
-SC_EXTERN sc_context_sp_t SC_CALL_DECL sc_make_context (void* sp, size_t size, void(*fn)(sc_transfer_t));
-SC_EXTERN void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
+sc_transfer_t SC_CALL_DECL sc_jump_context (sc_context_sp_t to, void* vp);
+sc_context_sp_t SC_CALL_DECL sc_make_context (void* sp, size_t size, void(*fn)(sc_transfer_t));
+void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
 
 /* For the provided fcontext implementations, there's no necessary work to
    be done for freeing a context, but some custom backends (for proprietary
    hardware) do. */
 
 #if defined(SC_CUSTOM_FREE_CONTEXT)
-    SC_EXTERN void SC_CALL_DECL sc_free_context (sc_context_sp_t);
+    void SC_CALL_DECL sc_free_context (sc_context_sp_t);
 #else
     SC_INLINE void sc_free_context (sc_context_sp_t ctx) { (void)ctx; }
 #endif

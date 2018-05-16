@@ -137,7 +137,7 @@ static void context_proc (sc_transfer_t transfer) {
  * Public implementation
  */
 
-SC_EXTERN sc_context_t SC_CALL_DECL sc_context_create (
+sc_context_t SC_CALL_DECL sc_context_create (
     void* stack_ptr,
     size_t stack_size,
     sc_context_proc_t proc
@@ -184,14 +184,14 @@ SC_EXTERN sc_context_t SC_CALL_DECL sc_context_create (
     return data;
 }
 
-SC_EXTERN void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
+void SC_CALL_DECL sc_context_destroy (sc_context_t context) {
     assert(context != sc_current_context());
     assert(context != sc_main_context());
 
     sc_free_context(context->ctx);
 }
 
-SC_EXTERN void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
+void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
     context_data* this_ctx = sc_current_context();
     sc_transfer_t transfer;
 
@@ -208,35 +208,35 @@ SC_EXTERN void* SC_CALL_DECL sc_switch (sc_context_t target, void* value) {
     return value;
 }
 
-SC_EXTERN void* SC_CALL_DECL sc_yield (void* value) {
+void* SC_CALL_DECL sc_yield (void* value) {
     context_data* current = sc_current_context();
     assert(current->parent != NULL);
     return sc_switch(current->parent, value);
 }
 
-SC_EXTERN void SC_CALL_DECL sc_set_data (sc_context_t context, void* data) {
+void SC_CALL_DECL sc_set_data (sc_context_t context, void* data) {
     context->user_data = data;
 }
 
-SC_EXTERN void* SC_CALL_DECL sc_get_data (sc_context_t context) {
+void* SC_CALL_DECL sc_get_data (sc_context_t context) {
     return context->user_data;
 }
 
-SC_EXTERN sc_state_t SC_CALL_DECL sc_get_state (sc_context_t context) {
+sc_state_t SC_CALL_DECL sc_get_state (sc_context_t context) {
     sc_state_t state;
     sc_context_state(&state, context->ctx);
     return state;
 }
 
-SC_EXTERN sc_context_t SC_CALL_DECL sc_current_context (void) {
+sc_context_t SC_CALL_DECL sc_current_context (void) {
     context_data* current = get_current();
     return current ? current : get_main();
 }
 
-SC_EXTERN sc_context_t SC_CALL_DECL sc_parent_context (void) {
+sc_context_t SC_CALL_DECL sc_parent_context (void) {
     return sc_current_context()->parent;
 }
 
-SC_EXTERN sc_context_t SC_CALL_DECL sc_main_context (void) {
+sc_context_t SC_CALL_DECL sc_main_context (void) {
     return get_main();
 }

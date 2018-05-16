@@ -15,9 +15,7 @@
 #endif
 
 #if defined(__cplusplus)
-#   define SC_EXTERN extern "C"
-#else
-#   define SC_EXTERN
+extern "C" {
 #endif
 
 /** Minimum supported stack size. */
@@ -123,7 +121,7 @@ typedef void (SC_CALL_DECL * sc_context_proc_t) (void* param);
  **                maximum stack size used by the procedure. As this is
  **                implementation specific, it is up to the caller (or
  **                possibly attached debuggers) to ensure this is true. */
-SC_EXTERN sc_context_t SC_CALL_DECL sc_context_create (
+sc_context_t SC_CALL_DECL sc_context_create (
     void* stack_ptr,
     size_t stack_size,
     sc_context_proc_t proc
@@ -134,7 +132,7 @@ SC_EXTERN sc_context_t SC_CALL_DECL sc_context_create (
  ** * `context`: Context to destroy. Must not be the currently executing
  **              context, or the main context (retrieved by calling
  **                `sc_main_context`). */
-SC_EXTERN void SC_CALL_DECL sc_context_destroy (sc_context_t context);
+void SC_CALL_DECL sc_context_destroy (sc_context_t context);
 
 /** Switch execution to another context, returning control to it, and
  ** passing the given value to it. Returns the value passed to
@@ -144,7 +142,7 @@ SC_EXTERN void SC_CALL_DECL sc_context_destroy (sc_context_t context);
  **             created by `sc_context_create`, or returned by
  **             `sc_main_context`.
  ** * `value`: Value to pass to the target context. */
-SC_EXTERN void* SC_CALL_DECL sc_switch (sc_context_t target, void* value);
+void* SC_CALL_DECL sc_switch (sc_context_t target, void* value);
 
 /** Yields execution to the parent context, returning control to it, and
  ** passing the given value to it. Returns the value passed to `sc_switch`
@@ -160,19 +158,19 @@ SC_EXTERN void* SC_CALL_DECL sc_switch (sc_context_t target, void* value);
  **                (returned by `sc_main_context`), as it does not have a
  **                parent. Doing so triggers an assert in debug builds,
  **                and undefined behavior in release builds. */
-SC_EXTERN void* SC_CALL_DECL sc_yield (void* value);
+void* SC_CALL_DECL sc_yield (void* value);
 
 /** Assign a user-specified pointer to be attached to the given context.
  **
  ** * `context`: Context to attach the pointer to.
  ** * `data`:    Pointer to attach to the context. */
-SC_EXTERN void SC_CALL_DECL sc_set_data (sc_context_t context, void* data);
+void SC_CALL_DECL sc_set_data (sc_context_t context, void* data);
 
 /** Get the user-specified pointer assigned to the given context through
  ** `sc_set_data`.
  **
  ** * `context`: Context to get the attached pointer for. */
-SC_EXTERN void* SC_CALL_DECL sc_get_data (sc_context_t context);
+void* SC_CALL_DECL sc_get_data (sc_context_t context);
 
 /** Get the current state of the given context.
  **
@@ -180,15 +178,19 @@ SC_EXTERN void* SC_CALL_DECL sc_get_data (sc_context_t context);
  **
  ** **Note:** Currently only implemented for Windows, macOS, and Linux. Other
  **           platforms will have the type set to `SC_CPU_TYPE_UNKNOWN`. */
-SC_EXTERN sc_state_t SC_CALL_DECL sc_get_state (sc_context_t context);
+sc_state_t SC_CALL_DECL sc_get_state (sc_context_t context);
 
 /** Get the handle for the currently executing context. */
-SC_EXTERN sc_context_t SC_CALL_DECL sc_current_context (void);
+sc_context_t SC_CALL_DECL sc_current_context (void);
 
 /** Get the handle for the currently executing context's parent context.
  ** The parent context is the context that created this context. If the
  ** currently executing context is the main context, NULL is returned. */
-SC_EXTERN sc_context_t SC_CALL_DECL sc_parent_context (void);
+sc_context_t SC_CALL_DECL sc_parent_context (void);
 
 /** Get the handle for this thread's main context. */
-SC_EXTERN sc_context_t SC_CALL_DECL sc_main_context (void);
+sc_context_t SC_CALL_DECL sc_main_context (void);
+
+#if defined(__cplusplus)
+} // extern "C"
+#endif
