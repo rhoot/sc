@@ -38,9 +38,10 @@ endif()
 
 add_library(sc STATIC
     include/sc.h
-    src/context.h
     src/context.c
-    src/sc.c)
+    src/sc.c
+    src/sc_p.h
+    src/tls.c)
 
 if(MSVC)
     target_sources(sc PRIVATE

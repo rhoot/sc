@@ -3,7 +3,7 @@
  * License: https://opensource.org/licenses/ISC
  */
 
-#include "context.h"
+#include "sc_p.h"
 
 //
 // X86

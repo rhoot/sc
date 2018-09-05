@@ -15,6 +15,10 @@
 #   define SC_INLINE static inline
 #endif
 
+//
+// Context Switching
+//
+
 typedef void* sc_context_sp_t;
 
 typedef struct {
@@ -35,3 +39,28 @@ void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx);
 #else
     SC_INLINE void sc_free_context (sc_context_sp_t ctx) { (void)ctx; }
 #endif
+
+//
+// sc_context
+//
+
+typedef struct sc_context {
+    sc_context_sp_t ctx;
+    sc_context_proc_t proc;
+    sc_context_t parent;
+    void* user_data;
+} context_data;
+
+//
+// Thread-locals
+//
+
+#if defined(_MSC_VER)
+#   define NO_INLINE    __declspec(noinline)
+#else
+#   define NO_INLINE    __attribute__((noinline))
+#endif
+
+NO_INLINE context_data* sc_get_main_context_data (void);
+NO_INLINE context_data* sc_get_curr_context_data (void);
+NO_INLINE void sc_set_curr_context_data (context_data* data);
