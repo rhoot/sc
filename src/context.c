@@ -68,7 +68,9 @@ void SC_CALL_DECL sc_context_state (sc_state_t* state, sc_context_sp_t ctx) {
 #   define SC_HAS_CONTEXT_STATE_IMPL
 
 #   if defined(_MSC_VER)
-#       define WIN32_LEAN_AND_MEAN
+#       if !defined(WIN32_LEAN_AND_MEAN)
+#           define WIN32_LEAN_AND_MEAN
+#       endif
 #       include <Windows.h>
 #   endif
 
