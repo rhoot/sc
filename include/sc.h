@@ -55,7 +55,7 @@ typedef struct {
         } arm;
 
         /** Registers captured on an arm64 CPU (when `type` is
-         ** `SC_CPU_TYPE_ARM`. */
+         ** `SC_CPU_TYPE_ARM64`. */
         struct {
             uint64_t x19;
             uint64_t x20;

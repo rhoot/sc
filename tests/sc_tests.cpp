@@ -243,7 +243,8 @@ DESCRIBE("sc_get_state") {
         const auto isX86 = state.type == SC_CPU_TYPE_X86;
         const auto isX64 = state.type == SC_CPU_TYPE_X64;
         const auto isArm = state.type == SC_CPU_TYPE_ARM;
-        REQUIRE((isX86 || isX64 || isArm));
+        const auto isArm64 = state.type == SC_CPU_TYPE_ARM64;
+        REQUIRE((isX86 || isX64 || isArm || isArm64));
     }
 
     IT("should return a yielded context's state") {
@@ -261,6 +262,13 @@ DESCRIBE("sc_get_state") {
                 REQUIRE(state.registers.arm.sp <= (uintptr_t)stackEnd);
                 REQUIRE(state.registers.arm.pc >= (uintptr_t)&sc_switch);
                 REQUIRE(state.registers.arm.pc <= (uintptr_t)&sc_switch + 0x1000);
+                break;
+
+            case SC_CPU_TYPE_ARM64:
+                REQUIRE(state.registers.arm64.sp >= (uintptr_t)stack);
+                REQUIRE(state.registers.arm64.sp <= (uintptr_t)stackEnd);
+                REQUIRE(state.registers.arm64.pc >= (uintptr_t)&sc_switch);
+                REQUIRE(state.registers.arm64.pc <= (uintptr_t)&sc_switch + 0x1000);
                 break;
 
             case SC_CPU_TYPE_X86:

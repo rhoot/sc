@@ -9,7 +9,7 @@ Cross platform co-routine library exposed through a minimal C API.
 | FreeBSD |     |                 |     |           |     |    ✓   |
 | iOS     |  ✓  |        ✓        |     |     ✓     |  ✓  |    ✓   |
 | Linux   |  ✓  |        ✓        |     |           |  ✓  |    ✓   |
-| OSX     |     |                 |     |     ✓     |  ✓  |    ✓   |
+| OSX     |     |        ✓        |     |     ✓     |  ✓  |    ✓   |
 | Windows |     |                 |     |           |  ✓  |    ✓   |
 
 *<sup>\*</sup>: Builds properly, but not tested.*
