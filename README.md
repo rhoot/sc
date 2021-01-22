@@ -1,4 +1,4 @@
-sc ![Build status](https://github.com/rhoot/sc/workflows/Build/badge.svg?branch=master) [![license](https://img.shields.io/github/license/rhoot/sc.svg)](https://opensource.org/licenses/ISC)
+sc [![Build status](https://github.com/rhoot/sc/workflows/Build/badge.svg?branch=master)](https://github.com/rhoot/sc/actions?query=workflow%3ABuild+branch%3Amaster) [![license](https://img.shields.io/github/license/rhoot/sc.svg)](https://opensource.org/licenses/ISC)
 ==
 
 Cross platform co-routine library exposed through a minimal C API.
