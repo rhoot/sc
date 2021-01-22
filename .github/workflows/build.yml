@@ -12,10 +12,10 @@ jobs:
                 include:
                     - name: ios-arm64
                       os: macos-latest
-                      cmake: -D IOS_ARCHITECTURES=arm64 -D CMAKE_TOOLCHAIN_FILE=scripts/cmake/ios.cmake
+                      cmake: -D IOS_ARCHITECTURES=arm64 -D CMAKE_TOOLCHAIN_FILE=cmake/ios.cmake
                     - name: ios-x86_64
                       os: macos-latest
-                      cmake: -D IOS_SIMULATOR=1 -D IOS_ARCHITECTURES=x86_64 -D CMAKE_TOOLCHAIN_FILE=scripts/cmake/ios.cmake
+                      cmake: -D IOS_SIMULATOR=1 -D IOS_ARCHITECTURES=x86_64 -D CMAKE_TOOLCHAIN_FILE=cmake/ios.cmake
                     - name: linux-x86
                       os: ubuntu-latest
                       cmake: -D SC_FORCE_32BIT=1
