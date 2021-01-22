@@ -1,0 +1,99 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        name: ${{ matrix.name }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - name: ios-arm64
+                      os: macos-latest
+                      cmake: -D IOS_ARCHITECTURES=arm64 -D CMAKE_TOOLCHAIN_FILE=scripts/cmake/ios.cmake
+                    - name: ios-x86_64
+                      os: macos-latest
+                      cmake: -D IOS_SIMULATOR=1 -D IOS_ARCHITECTURES=x86_64 -D CMAKE_TOOLCHAIN_FILE=scripts/cmake/ios.cmake
+                    - name: linux-x86
+                      os: ubuntu-latest
+                      cmake: -D SC_FORCE_32BIT=1
+                    - name: linux-x86_64
+                      os: ubuntu-latest
+                    - name: macos-arm64
+                      os: macos-latest
+                      cmake: -D CMAKE_OSX_ARCHITECTURES=arm64
+                    - name: macos-x86_64
+                      os: macos-latest
+                      cmake: -D CMAKE_OSX_ARCHITECTURES=x86_64
+                    - name: windows-x86
+                      os: windows-latest
+                      cmake: -A Win32
+                    - name: windows-x86_64
+                      os: windows-latest
+                      cmake: -A x64
+        steps:
+            - name: Setup dependencies
+              if: ${{ matrix.name == 'linux-x86' }}
+              run: |
+                  sudo DEBIAN_FRONTEND=noninteractive apt update -y -qq
+                  sudo DEBIAN_FRONTEND=noninteractive apt install -y -qq g++-multilib
+
+            - uses: actions/checkout@v2
+
+            - name: "Debug: Generate build files"
+              run: cmake -B build-debug -D CMAKE_BUILD_TYPE=Debug ${{ matrix.cmake }}
+            - name: "Debug: Build"
+              run: cmake --build build-debug --config Debug
+            - name: "Debug: Test"
+              if: ${{ !startsWith(matrix.name, 'ios-') && !endsWith(matrix.name, '-arm64') }}
+              run: cd build-debug && ctest -C Debug
+
+            - name: "Release: Generate build files"
+              run: cmake -B build-release -D CMAKE_BUILD_TYPE=Release ${{ matrix.cmake }}
+            - name: "Release: Build"
+              run: cmake --build build-release --config Release
+            - name: "Release: Test"
+              if: ${{ !startsWith(matrix.name, 'ios-') && !endsWith(matrix.name, '-arm64') }}
+              run: cd build-release && ctest -C Release
+
+    cross-compile:
+        name: ${{ matrix.name }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - name: android-arm
+                      target: android-arm
+                    - name: android-arm64
+                      target: android-arm64
+                    - name: linux-armv6
+                      target: linux-armv6
+                    - name: mingw-x86
+                      target: windows-x86
+                    - name: mingw-x86_64
+                      target: windows-x64
+                      cmake: -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=AMD64
+        steps:
+            - uses: actions/checkout@v2
+            - name: Generate dockcross script
+              run: |
+                  docker run --rm dockcross/${{ matrix.target }} > dockcross
+                  chmod +x dockcross
+
+            - name: "Debug: Generate build files"
+              run: |
+                  mkdir build-debug
+                  ./dockcross bash -c 'cd /work/build-debug && cmake -DCMAKE_BUILD_TYPE=Debug ${{ matrix.cmake }} ..'
+            - name: "Debug: Build"
+              run: ./dockcross cmake --build /work/build-debug
+
+            - name: "Release: Generate build files"
+              run: |
+                  mkdir build-release
+                  ./dockcross bash -c 'cd /work/build-release && cmake -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake }} ..'
+            - name: "Release: Build"
+              run: ./dockcross cmake --build /work/build-release
+

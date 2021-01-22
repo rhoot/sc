@@ -6,6 +6,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(sc)
 enable_language(C CXX)
+enable_testing()
 
 
 #
@@ -81,6 +82,8 @@ add_executable(sc_tests
     tests/main.cpp
     tests/sc_tests.cpp
     tests/win_tests.cpp)
+
+add_test(NAME sc_tests COMMAND sc_tests)
 
 if(MSVC)
     if(CMAKE_CL_64 EQUAL 1)
